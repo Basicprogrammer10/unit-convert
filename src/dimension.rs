@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use anyhow::Result;
 use hashbrown::HashMap;
@@ -51,8 +51,10 @@ impl Dimensions {
                 }
             }
             value *= (10 as Num).powf(i.exponent);
-            println!("{}\t=[ {} ]=>\t{}", old, i.conversion.name(), value);
+            println!("{: <8} =[ {: <6} ]=> {}", old, i.conversion.name(), value);
         }
+
+        println!();
 
         for i in &other.units {
             let old = value;
@@ -64,30 +66,29 @@ impl Dimensions {
                 }
             }
             value *= (10 as Num).powf(-i.exponent);
-            println!("{:.5}\t=[ {:} ]=>\t{:.5}", old, i.conversion.name(), value);
+            println!("{: <8.5} =[ {: <6} ]=> {:.5}", old, i.conversion.name(), value);
         }
 
         println!();
         Ok(value)
     }
 
-    pub fn as_base_units(&self) -> String {
-        let mut out = String::new();
+    pub fn simplify(&self) -> Self {
+        let mut new_units = Vec::<Unit>::new();
 
-        for unit in &self.units {
-            out.push_str(&if unit.power == 1.0 {
-                format!("[{}] ", unit.conversion.name())
+        for i in &self.units {
+            if let Some(j) = new_units
+                .iter_mut()
+                .find(|x| x.conversion.space() == i.conversion.space())
+            {
+                j.exponent += i.exponent;
+                j.power += i.power
             } else {
-                format!(
-                    "[{}]{} ",
-                    unit.conversion.name(),
-                    unit.power.to_string_with_chars(SUPERSCRIPT_CHARSET)
-                )
-            });
+                new_units.push(i.to_owned());
+            }
         }
 
-        out.pop();
-        out
+        Dimensions { units: new_units }
     }
 }
 
@@ -110,6 +111,27 @@ impl FromStr for Dimensions {
         let units = Expander::expand(tree)?;
 
         Ok(Dimensions { units })
+    }
+}
+
+impl Display for Dimensions {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut out = String::new();
+
+        for unit in &self.units {
+            out.push_str(&if unit.power == 1.0 {
+                format!("[{}] ", unit.conversion.name())
+            } else {
+                format!(
+                    "[{}]{} ",
+                    unit.conversion.name(),
+                    unit.power.to_string_with_chars(SUPERSCRIPT_CHARSET)
+                )
+            });
+        }
+
+        out.pop();
+        f.write_str(&out)
     }
 }
 
