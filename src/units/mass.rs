@@ -3,8 +3,8 @@ use crate::impl_units;
 impl_units! {
     Mass => {
         Gram => [
-            <| |g| *g,
-            |> |g| *g,
+            <| |g| g,
+            |> |g| g,
             aliases = ["g"],
             metric = true
         ],

@@ -56,9 +56,9 @@ impl Dimensions {
             let old = value;
             for _ in 0..i.power.abs() as usize {
                 value = if i.power.signum() > 0.0 {
-                    i.conversion.to_base(&value)
+                    i.conversion.to_base(value)
                 } else {
-                    i.conversion.from_base(&value)
+                    i.conversion.from_base(value)
                 }
             }
             value *= (10 as Num).powf(i.exponent);
@@ -77,9 +77,9 @@ impl Dimensions {
             let old = value;
             for _ in 0..i.power.abs() as usize {
                 value = if i.power.signum() > 0.0 {
-                    i.conversion.from_base(&value)
+                    i.conversion.from_base(value)
                 } else {
-                    i.conversion.to_base(&value)
+                    i.conversion.to_base(value)
                 }
             }
             value *= (10 as Num).powf(-i.exponent);

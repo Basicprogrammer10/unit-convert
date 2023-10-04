@@ -1,17 +1,33 @@
 use std::fmt::{Debug, Display};
 
 use crate::Num;
+pub mod electric_current;
 pub mod length;
+pub mod luminous_intensity;
 pub mod mass;
+pub mod quantity;
+pub mod temperature;
 pub mod time;
 
-pub const UNIT_SPACES: &[&dyn UnitSpace] = &[&time::Time, &length::Length];
+pub const UNIT_SPACES: &[&dyn UnitSpace] = &[
+    &time::Time,
+    &length::Length,
+    &mass::Mass,
+    &temperature::Temperature,
+    &electric_current::ElectricCurrent,
+    &quantity::Quantity,
+    &luminous_intensity::LuminousIntensity,
+];
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum Space {
     Time,
     Length,
     Mass,
+    Temperature,
+    ElectricCurrent,
+    Quantity,
+    LuminousIntensity,
 }
 
 pub trait UnitSpace {
@@ -36,10 +52,10 @@ pub trait Conversion {
     fn space(&self) -> Space;
     // todo: Use Num not a ref
     /// Converts a value in this unit to the unit space's base unit.
-    fn to_base(&self, this: &Num) -> Num;
+    fn to_base(&self, this: Num) -> Num;
     /// Converts a value in the unit space's base unit to this unit.
     #[allow(clippy::wrong_self_convention)]
-    fn from_base(&self, s: &Num) -> Num;
+    fn from_base(&self, s: Num) -> Num;
 
     /// Gets the aliases of the unit.
     /// All aliases must be lowercase.
@@ -82,6 +98,10 @@ impl Display for Space {
             Space::Time => "time",
             Space::Length => "length",
             Space::Mass => "mass",
+            Space::Temperature => "temperature",
+            Space::ElectricCurrent => "electric current",
+            Space::Quantity => "quantity",
+            Space::LuminousIntensity => "luminous intensity",
         })
     }
 }
@@ -143,13 +163,13 @@ macro_rules! impl_units {
                     Space::$space
                 }
 
-                fn to_base(&self, this: &Num) -> Num {
-                    let exe: fn(&Num) -> Num = $to_base;
+                fn to_base(&self, this: Num) -> Num {
+                    let exe: fn(Num) -> Num = $to_base;
                     exe(this)
                 }
 
-                fn from_base(&self, s: &Num) -> Num {
-                    let exe: fn(&Num) -> Num = $from_base;
+                fn from_base(&self, s: Num) -> Num {
+                    let exe: fn(Num) -> Num = $from_base;
                     exe(s)
                 }
 

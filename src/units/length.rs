@@ -3,8 +3,8 @@ use crate::impl_units;
 impl_units! {
     Length => {
         Meter => [
-            <| |m| *m,
-            |> |m| *m,
+            <| |m| m,
+            |> |m| m,
             aliases = ["m", "metre"],
             metric = true
         ],
@@ -21,7 +21,7 @@ impl_units! {
         Foot => [
             <| |f| f * 0.3048,
             |> |m| m / 0.3048,
-            aliases = ["ft", "foot", "feet"]
+            aliases = ["ft", "feet"]
         ],
         Yard => [
             <| |y| y * 0.9144,

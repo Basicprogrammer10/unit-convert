@@ -3,8 +3,8 @@ use crate::impl_units;
 impl_units! {
     Time => {
         Second => [
-            <| |s| *s,
-            |> |s| *s,
+            <| |s| s,
+            |> |s| s,
             aliases = ["s", "sec"],
             metric = true
         ],
