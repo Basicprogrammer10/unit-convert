@@ -29,7 +29,7 @@ impl FromStr for Input {
 
         Ok(Input {
             value: num,
-            from_unit: from,
+            from_unit: from.trim().to_owned(),
             to_unit: to.trim().to_owned(),
         })
     }

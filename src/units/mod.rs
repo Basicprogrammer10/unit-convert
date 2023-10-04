@@ -10,24 +10,24 @@ pub mod temperature;
 pub mod time;
 
 pub const UNIT_SPACES: &[&dyn UnitSpace] = &[
-    &time::Time,
-    &length::Length,
-    &mass::Mass,
-    &temperature::Temperature,
     &electric_current::ElectricCurrent,
-    &quantity::Quantity,
+    &length::Length,
     &luminous_intensity::LuminousIntensity,
+    &mass::Mass,
+    &quantity::Quantity,
+    &temperature::Temperature,
+    &time::Time,
 ];
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum Space {
-    Time,
-    Length,
-    Mass,
-    Temperature,
     ElectricCurrent,
-    Quantity,
+    Length,
     LuminousIntensity,
+    Mass,
+    Quantity,
+    Temperature,
+    Time,
 }
 
 pub trait UnitSpace {
@@ -95,13 +95,13 @@ impl Display for dyn Conversion {
 impl Display for Space {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(match self {
-            Space::Time => "time",
-            Space::Length => "length",
-            Space::Mass => "mass",
-            Space::Temperature => "temperature",
             Space::ElectricCurrent => "electric current",
-            Space::Quantity => "quantity",
+            Space::Length => "length",
             Space::LuminousIntensity => "luminous intensity",
+            Space::Mass => "mass",
+            Space::Quantity => "quantity",
+            Space::Temperature => "temperature",
+            Space::Time => "time",
         })
     }
 }
