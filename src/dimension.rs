@@ -61,7 +61,7 @@ impl Dimensions {
                     i.conversion.from_base(value)
                 }
             }
-            value *= (10 as Num).powf(i.exponent);
+            value *= (10 as Num).powf(i.exponent * i.power);
             debug_println!(
                 debug,
                 "{: <8} =[ {: <6} ]=> {}",
@@ -82,7 +82,7 @@ impl Dimensions {
                     i.conversion.to_base(value)
                 }
             }
-            value *= (10 as Num).powf(-i.exponent);
+            value *= (10 as Num).powf(-i.exponent * i.power);
             debug_println!(
                 debug,
                 "{: <8.5} =[ {: <6} ]=> {:.5}",

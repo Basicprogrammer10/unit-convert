@@ -16,3 +16,4 @@
   - [ ] Allow returning a string or pre-tokenized expression (enum)
     - [ ] Can we tokenize at compile time?
 - [ ] Add lots of wacky units
+- [ ] Scientific notation for inputs and outputs
