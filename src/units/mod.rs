@@ -76,6 +76,16 @@ impl Display for dyn Conversion {
     }
 }
 
+impl Display for Space {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Space::Time => "time",
+            Space::Length => "length",
+            Space::Mass => "mass",
+        })
+    }
+}
+
 impl Debug for dyn Conversion {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(self.name())

@@ -1,10 +1,13 @@
 [package]
+authors = ["Connor Slade <conorslade@connorcode.com>"]
+description = "A CLI tool to convert between units."
+edition = "2021"
 name = "unit_convert"
 version = "0.1.0"
-edition = "2021"
 
 [dependencies]
 anyhow = "1.0.75"
+clap = { version = "4.4.6", features = ["derive"] }
 hashbrown = "0.14.1"
 identconv = "0.2.0"
 once_cell = "1.18.0"

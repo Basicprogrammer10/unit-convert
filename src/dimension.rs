@@ -1,4 +1,4 @@
-use std::{fmt::Display, str::FromStr};
+use std::{borrow::Cow, fmt::Display, str::FromStr};
 
 use anyhow::Result;
 use hashbrown::HashMap;
@@ -39,8 +39,19 @@ pub enum Op {
     Pow,
 }
 
+macro_rules! debug_println {
+    ($is_debug:expr) => {
+        debug_println!($is_debug,);
+    };
+    ($is_debug:expr, $($arg:tt)*) => {
+        if $is_debug {
+            println!($($arg)*);
+        }
+    };
+}
+
 impl Dimensions {
-    pub fn convert(&self, other: &Dimensions, mut value: Num) -> Result<Num> {
+    pub fn convert(&self, other: &Dimensions, mut value: Num, debug: bool) -> Result<Num> {
         for i in &self.units {
             let old = value;
             for _ in 0..i.power.abs() as usize {
@@ -51,10 +62,16 @@ impl Dimensions {
                 }
             }
             value *= (10 as Num).powf(i.exponent);
-            println!("{: <8} =[ {: <6} ]=> {}", old, i.conversion.name(), value);
+            debug_println!(
+                debug,
+                "{: <8} =[ {: <6} ]=> {}",
+                old,
+                i.conversion.name(),
+                value
+            );
         }
 
-        println!();
+        debug_println!(debug);
 
         for i in &other.units {
             let old = value;
@@ -66,10 +83,16 @@ impl Dimensions {
                 }
             }
             value *= (10 as Num).powf(-i.exponent);
-            println!("{: <8.5} =[ {: <6} ]=> {:.5}", old, i.conversion.name(), value);
+            debug_println!(
+                debug,
+                "{: <8.5} =[ {: <6} ]=> {:.5}",
+                old,
+                i.conversion.name(),
+                value
+            );
         }
 
-        println!();
+        debug_println!(debug);
         Ok(value)
     }
 
@@ -116,15 +139,21 @@ impl FromStr for Dimensions {
 
 impl Display for Dimensions {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let name = if f.alternate() {
+            |unit: &Unit| Cow::Owned(unit.conversion.space().to_string())
+        } else {
+            |unit: &Unit| Cow::Borrowed(unit.conversion.name())
+        };
+
         let mut out = String::new();
 
         for unit in &self.units {
             out.push_str(&if unit.power == 1.0 {
-                format!("[{}] ", unit.conversion.name())
+                format!("[{}] ", name(unit))
             } else {
                 format!(
                     "[{}]{} ",
-                    unit.conversion.name(),
+                    name(unit),
                     unit.power.to_string_with_chars(SUPERSCRIPT_CHARSET)
                 )
             });

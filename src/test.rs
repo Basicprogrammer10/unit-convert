@@ -13,7 +13,7 @@ fn convert(inp: &str) -> Result<Num> {
     let from_dim = Dimensions::from_str(&inp.from_unit)?;
     let to_dim = Dimensions::from_str(&inp.to_unit)?;
 
-    let val = from_dim.convert(&to_dim, inp.value)?;
+    let val = from_dim.convert(&to_dim, inp.value, true)?;
     Ok(val)
 }
 
