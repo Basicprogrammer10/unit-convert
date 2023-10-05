@@ -5,7 +5,7 @@ impl_units! {
         Number => [
             <| |n| n,
             |> |n| n,
-            aliases = ["n", "num", "x"],
+            aliases = ["num", "x"], // "n",
             metric = true
         ],
         Mole => [

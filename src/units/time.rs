@@ -8,6 +8,11 @@ impl_units! {
             aliases = ["s", "sec"],
             metric = true
         ],
+        Hz => [
+            <| |h| h.recip(),
+            |> |s| s.recip(),
+            metric = true
+        ],
         Minute => [
             <| |m| m * 60.0,
             |> |s| s / 60.0,

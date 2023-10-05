@@ -15,10 +15,11 @@ pub struct Dimensions {
     units: Vec<Unit>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Unit {
     conversion: &'static dyn Conversion,
     power: Num,
+    /// * 10^exponent
     exponent: Num,
 }
 
@@ -117,6 +118,16 @@ impl Dimensions {
     }
 }
 
+impl Unit {
+    pub const fn new(conversion: &'static dyn Conversion, power: Num, exponent: Num) -> Self {
+        Self {
+            conversion,
+            power,
+            exponent,
+        }
+    }
+}
+
 impl Op {
     fn precedence(&self) -> u8 {
         match self {
@@ -135,6 +146,7 @@ impl FromStr for Dimensions {
         let tree = Treeifyer::treeify(tokens);
         let units = Expander::expand(tree)?;
 
+        dbg!(&units);
         Ok(Dimensions { units })
     }
 }
@@ -461,7 +473,7 @@ pub mod tokenizer {
     use anyhow::{bail, Result};
 
     use super::{Op, Token, Unit};
-    use crate::{prefix, Num};
+    use crate::{prefix, units::ConversionType, Num};
 
     pub struct Tokenizer {
         chars: Box<[char]>,
@@ -536,11 +548,22 @@ pub mod tokenizer {
             if let Ok(num) = self.buffer.parse::<Num>() {
                 self.tokens.push(Token::Num(num));
             } else if let Some((conversion, power)) = prefix::get(&self.buffer) {
-                self.tokens.push(Token::Unit(Unit {
-                    conversion,
-                    power: power.map(|x| x.power as Num).unwrap_or(1.0),
-                    exponent: 1.0,
-                }));
+                match conversion {
+                    ConversionType::Conversion(conversion) => self.tokens.push(Token::Unit(Unit {
+                        conversion,
+                        power: power.map(|x| x.power as Num).unwrap_or(1.0),
+                        exponent: 1.0,
+                    })),
+                    ConversionType::DerivedConversion(conversion) => {
+                        self.tokens.push(Token::Group(
+                            conversion
+                                .expand()
+                                .into_iter()
+                                .map(|x| Token::Unit(*x))
+                                .collect(),
+                        ))
+                    }
+                }
             } else {
                 bail!("Invalid token: {}", self.buffer);
             }

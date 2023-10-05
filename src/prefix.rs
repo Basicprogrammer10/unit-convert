@@ -1,4 +1,4 @@
-use crate::units::{find_unit, Conversion};
+use crate::units::{find_unit, Conversion, ConversionType};
 
 #[rustfmt::skip]
 pub const METRIC_PREFIX: [Prefix; 24] = [
@@ -57,7 +57,7 @@ fn strip_prefix(s: &str) -> Option<(&str, &Prefix)> {
     None
 }
 
-pub fn get(s: &str) -> Option<(&'static dyn Conversion, Option<&Prefix>)> {
+pub fn get(s: &str) -> Option<(ConversionType, Option<&Prefix>)> {
     if let Some(i) = find_unit(s) {
         return Some((i, None));
     }
@@ -78,11 +78,11 @@ mod test {
     #[test]
     fn test_metric_prefix() {
         let unit = get("kilometer").unwrap();
-        assert_eq!(unit.0.name(), "meter");
+        assert_eq!(unit.0.as_conversion().unwrap().name(), "meter");
         assert_eq!(unit.1.unwrap().name, "kilo");
 
         let unit = get("km").unwrap();
-        assert_eq!(unit.0.name(), "meter");
+        assert_eq!(unit.0.as_conversion().unwrap().name(), "meter");
         assert_eq!(unit.1.unwrap().name, "kilo");
     }
 }

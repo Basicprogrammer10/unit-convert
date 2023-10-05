@@ -1,6 +1,9 @@
 use std::fmt::{Debug, Display};
 
 use crate::Num;
+
+use self::derived::{DerivedConversion, DERIVED_UNITS};
+pub mod derived;
 pub mod electric_current;
 pub mod length;
 pub mod luminous_intensity;
@@ -28,6 +31,12 @@ pub enum Space {
     Quantity,
     Temperature,
     Time,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum ConversionType {
+    Conversion(&'static dyn Conversion),
+    DerivedConversion(&'static dyn DerivedConversion),
 }
 
 pub trait UnitSpace {
@@ -76,8 +85,37 @@ pub trait Conversion {
     }
 }
 
-pub fn find_unit(s: &str) -> Option<&'static dyn Conversion> {
-    UNIT_SPACES.iter().find_map(|space| space.get(s).copied())
+pub fn find_unit(s: &str) -> Option<ConversionType> {
+    UNIT_SPACES
+        .iter()
+        .find_map(|space| space.get(s).map(|x| ConversionType::Conversion(*x)))
+        .or_else(|| {
+            DERIVED_UNITS
+                .iter()
+                .find(|x| {
+                    let name = s.to_lowercase();
+                    // TODO: move to func
+                    x.name() == name || x.aliases().contains(&name.as_str())
+                })
+                .map(|x| ConversionType::DerivedConversion(*x))
+        })
+}
+
+impl ConversionType {
+    pub fn as_conversion(&self) -> Option<&'static dyn Conversion> {
+        if let ConversionType::Conversion(conversion) = self {
+            return Some(*conversion);
+        }
+
+        None
+    }
+
+    pub fn is_metric(&self) -> bool {
+        match self {
+            ConversionType::Conversion(c) => c.is_metric(),
+            ConversionType::DerivedConversion(c) => c.is_metric(),
+        }
+    }
 }
 
 impl Display for dyn UnitSpace {
