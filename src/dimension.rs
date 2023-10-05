@@ -53,6 +53,7 @@ macro_rules! debug_println {
 impl Dimensions {
     pub fn convert(&self, other: &Dimensions, mut value: Num, debug: bool) -> Result<Num> {
         for i in &self.units {
+            assert_eq!(i.power.fract(), 0.0);
             let old = value;
             for _ in 0..i.power.abs() as usize {
                 value = if i.power.signum() > 0.0 {
@@ -74,6 +75,7 @@ impl Dimensions {
         debug_println!(debug);
 
         for i in &other.units {
+            assert_eq!(i.power.fract(), 0.0);
             let old = value;
             for _ in 0..i.power.abs() as usize {
                 value = if i.power.signum() > 0.0 {
