@@ -51,6 +51,15 @@ macro_rules! debug_println {
     };
 }
 
+impl Unit {
+    /// A unit is special if it is not part of the base dimension.
+    /// I should have probably thought of a better name...
+    pub fn is_special(&self) -> bool {
+        // TODO: add type ids or something :sob:
+        self.conversion.name() == "varnum"
+    }
+}
+
 impl Dimensions {
     pub fn convert(&self, other: &Dimensions, mut value: Num, debug: bool) -> Result<Num> {
         for i in &self.units {
@@ -160,7 +169,7 @@ impl Display for Dimensions {
 
         let mut out = String::new();
 
-        for unit in &self.units {
+        for unit in self.units.iter().filter(|x| !x.is_special()) {
             out.push_str(&if unit.power == 1.0 {
                 format!("[{}] ", name(unit))
             } else {
@@ -180,14 +189,14 @@ impl Display for Dimensions {
 impl PartialEq for Dimensions {
     fn eq(&self, other: &Self) -> bool {
         let mut self_dimensions = HashMap::new();
-        for unit in &self.units {
+        for unit in self.units.iter().filter(|x| !x.is_special()) {
             *self_dimensions
                 .entry(unit.conversion.space())
                 .or_insert(0.0) += unit.power;
         }
 
         let mut other_dimensions = HashMap::new();
-        for unit in &other.units {
+        for unit in other.units.iter().filter(|x| !x.is_special()) {
             *other_dimensions
                 .entry(unit.conversion.space())
                 .or_insert(0.0) += unit.power;

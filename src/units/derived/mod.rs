@@ -1,10 +1,10 @@
 use std::fmt::Debug;
 
-use crate::dimension::Unit;
+use crate::{dimension::Unit, Num};
 
-use super::{length, mass, time};
+use super::{length, mass, time, Conversion, Space};
 
-pub const DERIVED_UNITS: &[&'static dyn DerivedConversion] = &[&Newton, &Joule];
+pub const DERIVED_UNITS: &[&'static dyn DerivedConversion] = &[&Newton, &Joule, &PoundForce];
 
 pub trait DerivedConversion {
     fn name(&self) -> &'static str;
@@ -15,6 +15,34 @@ pub trait DerivedConversion {
     }
     fn aliases(&self) -> &'static [&'static str] {
         &[]
+    }
+}
+
+pub struct VarNum {
+    multiplier: Num,
+}
+
+impl VarNum {
+    pub const fn new(multiplier: Num) -> Self {
+        Self { multiplier }
+    }
+}
+
+impl Conversion for VarNum {
+    fn name(&self) -> &'static str {
+        "varnum"
+    }
+
+    fn space(&self) -> Space {
+        Space::Quantity
+    }
+
+    fn to_base(&self, this: Num) -> Num {
+        this * self.multiplier
+    }
+
+    fn from_base(&self, s: Num) -> Num {
+        s / self.multiplier
     }
 }
 
@@ -87,6 +115,17 @@ impl_derived_units! {
             Unit::new(&time::Second, -2.0, 0.0)
         ],
         aliases = ["J"],
+        metric = true
+    ],
+    /// `4.448222*N`
+    PoundForce => [
+        <| [
+            Unit::new(&VarNum::new(4.448222), 1.0, 0.0),
+            Unit::new(&mass::Gram, 1.0, 3.0),
+            Unit::new(&length::Meter, 1.0, 0.0),
+            Unit::new(&time::Second, -2.0, 0.0)
+        ],
+        aliases = ["lbf"],
         metric = true
     ]
 }
