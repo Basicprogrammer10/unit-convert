@@ -5,7 +5,7 @@ impl_units! {
         Ampere => [
             <| |a| a,
             |> |a| a,
-            aliases = ["a", "amp", "ampere"],
+            aliases = ["A", "amp"],
             metric = true
         ]
     }

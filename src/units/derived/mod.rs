@@ -76,8 +76,7 @@ impl_derived_units! {
             Unit::new(&length::Meter, 1.0, 0.0),
             Unit::new(&time::Second, -2.0, 0.0)
         ],
-        // Should be capitalized?
-        aliases = ["n"],
+        aliases = ["N"],
         metric = true
     ],
     /// `kg*m^2*s^{−2}`
@@ -87,8 +86,7 @@ impl_derived_units! {
             Unit::new(&length::Meter, 2.0, 0.0),
             Unit::new(&time::Second, -2.0, 0.0)
         ],
-        // Should be capitalized
-        aliases = ["j"],
+        aliases = ["J"],
         metric = true
     ]
 }

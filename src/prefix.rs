@@ -1,4 +1,4 @@
-use crate::units::{find_unit, Conversion, ConversionType};
+use crate::units::{find_unit, ConversionType};
 
 #[rustfmt::skip]
 pub const METRIC_PREFIX: [Prefix; 24] = [

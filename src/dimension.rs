@@ -146,7 +146,6 @@ impl FromStr for Dimensions {
         let tree = Treeifyer::treeify(tokens);
         let units = Expander::expand(tree)?;
 
-        dbg!(&units);
         Ok(Dimensions { units })
     }
 }
@@ -550,7 +549,7 @@ pub mod tokenizer {
 
             if let Ok(num) = self.buffer.parse::<Num>() {
                 self.tokens.push(Token::Num(num));
-            } else if let Some((conversion, prefix)) = dbg!(prefix::get(&self.buffer)) {
+            } else if let Some((conversion, prefix)) = prefix::get(&self.buffer) {
                 match conversion {
                     ConversionType::Conversion(conversion) => self.tokens.push(Token::Unit(Unit {
                         conversion,
@@ -560,7 +559,7 @@ pub mod tokenizer {
                     ConversionType::DerivedConversion(conversion) => {
                         let mut tokens = conversion
                             .expand()
-                            .into_iter()
+                            .iter()
                             .map(|x| Token::Unit(*x))
                             .intersperse(Token::Op(Op::Mul))
                             .collect::<Vec<_>>();

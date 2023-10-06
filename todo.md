@@ -11,10 +11,7 @@
 - [x] Simplify `&'static &'static` to `&'static`
 - [x] Nice cli
 - [x] [Split into new repo?](https://docs.github.com/en/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository)
-- [ ] Support derived units Ex: J expands to ($kg*m^2*s^{−2}$)
-  - [ ] Add pre-process step for unit expiation
-  - [ ] Allow returning a string or pre-tokenized expression (enum)
-    - [ ] Can we tokenize at compile time?
+- [x] Support derived units Ex: J expands to ($kg*m^2*s^{−2}$)
 - [ ] Add lots of wacky units
 - [ ] Scientific notation for inputs and outputs
-- [ ] Respect unit case?
+- [x] Respect unit case?

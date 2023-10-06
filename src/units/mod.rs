@@ -67,7 +67,6 @@ pub trait Conversion {
     fn from_base(&self, s: Num) -> Num;
 
     /// Gets the aliases of the unit.
-    /// All aliases must be lowercase.
     fn aliases(&self) -> &'static [&'static str] {
         &[]
     }
@@ -78,10 +77,8 @@ pub trait Conversion {
     }
 
     /// Checks if the given name is the name or an alias of this unit.
-    /// Case insensitive.
     fn is_alias(&self, name: &str) -> bool {
-        let name = name.to_ascii_lowercase();
-        self.name() == name || self.aliases().contains(&name.as_str())
+        self.name() == name || self.aliases().contains(&name)
     }
 }
 
@@ -92,11 +89,7 @@ pub fn find_unit(s: &str) -> Option<ConversionType> {
         .or_else(|| {
             DERIVED_UNITS
                 .iter()
-                .find(|x| {
-                    let name = s.to_lowercase();
-                    // TODO: move to func
-                    x.name() == name || x.aliases().contains(&name.as_str())
-                })
+                .find(|x| x.name() == s || x.aliases().contains(&s))
                 .map(|x| ConversionType::DerivedConversion(*x))
         })
 }
