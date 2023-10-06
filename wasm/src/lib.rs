@@ -6,7 +6,7 @@ use std::str::FromStr;
 
 #[wasm_bindgen]
 pub fn convert(input: &str) -> Result<f64, String> {
-    fn convert_inner(input: &str) -> anyhow::Result<f64> {
+    fn inner(input: &str) -> anyhow::Result<f64> {
         let inp = input::Input::from_str(input)?;
 
         let from_dim = Dimensions::from_str(&inp.from_unit)?;
@@ -20,8 +20,8 @@ pub fn convert(input: &str) -> Result<f64, String> {
             );
         }
 
-        Ok(from_dim.convert(&to_dim, inp.value, false)?)
+        from_dim.convert(&to_dim, inp.value, false)
     }
 
-    Ok(convert_inner(input).map_err(|x| x.to_string())?)
+    inner(input).map_err(|x| x.to_string())
 }

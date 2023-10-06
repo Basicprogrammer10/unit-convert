@@ -4,7 +4,7 @@ use crate::dimension::Unit;
 
 use super::{length, mass, time};
 
-pub const DERIVED_UNITS: &[&'static dyn DerivedConversion] = &[&Newton];
+pub const DERIVED_UNITS: &[&'static dyn DerivedConversion] = &[&Newton, &Joule];
 
 pub trait DerivedConversion {
     fn name(&self) -> &'static str;
@@ -30,7 +30,6 @@ impl PartialEq for dyn DerivedConversion {
     }
 }
 
-// TODO: impl is_metric
 macro_rules! impl_derived_units {
     {
         $(
@@ -38,6 +37,7 @@ macro_rules! impl_derived_units {
             $name:ident => [
                 <| [$($unit:expr),*]
                 $(, aliases = [$($aliases:expr),*])?
+                $(, metric = $metric:expr)?
             ]
         ),*
     } => {
@@ -58,6 +58,11 @@ macro_rules! impl_derived_units {
                 fn aliases(&self) -> &'static [&'static str] {
                     &[$($($aliases),*)?]
                 }
+
+                fn is_metric(&self) -> bool {
+                    false
+                    $(;$metric)?
+                }
             }
         )*
     };
@@ -67,10 +72,23 @@ impl_derived_units! {
     /// `kg*m*s^{−2}`
     Newton => [
         <| [
-            Unit::new(&mass::Gram, 3.0, 1.0),
-            Unit::new(&length::Meter, 1.0, 1.0),
+            Unit::new(&mass::Gram, 1.0, 3.0),
+            Unit::new(&length::Meter, 1.0, 0.0),
             Unit::new(&time::Second, -2.0, 0.0)
         ],
-        aliases = ["n"]
+        // Should be capitalized?
+        aliases = ["n"],
+        metric = true
+    ],
+    /// `kg*m^2*s^{−2}`
+    Joule => [
+        <| [
+            Unit::new(&mass::Gram, 1.0, 3.0),
+            Unit::new(&length::Meter, 2.0, 0.0),
+            Unit::new(&time::Second, -2.0, 0.0)
+        ],
+        // Should be capitalized
+        aliases = ["j"],
+        metric = true
     ]
 }

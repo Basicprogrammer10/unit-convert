@@ -17,3 +17,4 @@
     - [ ] Can we tokenize at compile time?
 - [ ] Add lots of wacky units
 - [ ] Scientific notation for inputs and outputs
+- [ ] Respect unit case?

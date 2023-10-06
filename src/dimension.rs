@@ -20,7 +20,7 @@ pub struct Unit {
     conversion: &'static dyn Conversion,
     power: Num,
     /// * 10^exponent
-    exponent: Num,
+    sci_exponent: Num,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -63,7 +63,7 @@ impl Dimensions {
                     i.conversion.from_base(value)
                 }
             }
-            value *= (10 as Num).powf(i.exponent * i.power);
+            value *= (10 as Num).powf(i.sci_exponent);
             debug_println!(
                 debug,
                 "{: <8} =[ {: <6} ]=> {}",
@@ -85,7 +85,7 @@ impl Dimensions {
                     i.conversion.to_base(value)
                 }
             }
-            value *= (10 as Num).powf(-i.exponent * i.power);
+            value *= (10 as Num).powf(-i.sci_exponent);
             debug_println!(
                 debug,
                 "{: <8.5} =[ {: <6} ]=> {:.5}",
@@ -107,7 +107,7 @@ impl Dimensions {
                 .iter_mut()
                 .find(|x| x.conversion.space() == i.conversion.space())
             {
-                j.exponent += i.exponent;
+                j.sci_exponent += i.sci_exponent;
                 j.power += i.power
             } else {
                 new_units.push(i.to_owned());
@@ -119,11 +119,11 @@ impl Dimensions {
 }
 
 impl Unit {
-    pub const fn new(conversion: &'static dyn Conversion, power: Num, exponent: Num) -> Self {
+    pub const fn new(conversion: &'static dyn Conversion, power: Num, sci_exponent: Num) -> Self {
         Self {
             conversion,
             power,
-            exponent,
+            sci_exponent,
         }
     }
 }
@@ -231,13 +231,13 @@ pub mod expander {
             Self { units: Vec::new() }
         }
 
-        fn _expand(&mut self, token: Token, exponent: Num) -> Result<()> {
+        fn _expand(&mut self, token: Token, power: Num) -> Result<()> {
             match token {
                 Token::Tree(op, left, right) => match op {
                     Op::Pow => {
                         self._expand(
                             *left,
-                            exponent
+                            power
                                 * match *right {
                                     Token::Num(num) => num,
                                     _ => bail!("Invalid exponent. (Expected number)"),
@@ -245,27 +245,30 @@ pub mod expander {
                         )?;
                     }
                     Op::Div => {
-                        self._expand(*left, exponent)?;
-                        self._expand(*right, -exponent)?;
+                        self._expand(*left, power)?;
+                        self._expand(*right, -power)?;
                     }
                     _ => {
-                        self._expand(*left, exponent)?;
-                        self._expand(*right, exponent)?;
+                        self._expand(*left, power)?;
+                        self._expand(*right, power)?;
                     }
                 },
                 Token::Unit(Unit {
-                    conversion, power, ..
+                    conversion,
+                    power: unit_power,
+                    sci_exponent,
                 }) => {
                     let unit = Unit {
                         conversion,
-                        power: exponent,
-                        exponent: if power == 1.0 { 0.0 } else { power },
+                        // todo: is this correct?
+                        power: power * unit_power,
+                        sci_exponent,
                     };
                     self.units.push(unit);
                 }
                 Token::Group(group) => {
                     for i in group {
-                        self._expand(i, exponent)?;
+                        self._expand(i, power)?;
                     }
                 }
                 Token::Num(..) | Token::Op(..) => unreachable!(),
@@ -293,14 +296,14 @@ pub mod expander {
                 Box::new(Token::Unit(Unit {
                     conversion: meter,
                     power: 1.0,
-                    exponent: 0.0,
+                    sci_exponent: 0.0,
                 })),
                 Box::new(Token::Tree(
                     Op::Pow,
                     Box::new(Token::Unit(Unit {
                         conversion: sec,
                         power: 1.0,
-                        exponent: 0.0,
+                        sci_exponent: 0.0,
                     })),
                     Box::new(Token::Num(2.0)),
                 )),
@@ -313,12 +316,12 @@ pub mod expander {
                     Unit {
                         conversion: meter,
                         power: 1.0,
-                        exponent: 0.0,
+                        sci_exponent: 0.0,
                     },
                     Unit {
                         conversion: sec,
                         power: -2.0,
-                        exponent: 0.0,
+                        sci_exponent: 0.0,
                     }
                 ]
             );
@@ -431,13 +434,13 @@ pub mod tree {
                 Token::Unit(Unit {
                     conversion: min,
                     power: 1.0,
-                    exponent: 1.0,
+                    sci_exponent: 1.0,
                 }),
                 Token::Op(Op::Div),
                 Token::Unit(Unit {
                     conversion: sec,
                     power: 1.0,
-                    exponent: 1.0,
+                    sci_exponent: 1.0,
                 }),
                 Token::Op(Op::Pow),
                 Token::Num(2.0),
@@ -452,14 +455,14 @@ pub mod tree {
                     Box::new(Token::Unit(Unit {
                         conversion: min,
                         power: 1.0,
-                        exponent: 1.0,
+                        sci_exponent: 1.0,
                     })),
                     Box::new(Token::Tree(
                         Op::Pow,
                         Box::new(Token::Unit(Unit {
                             conversion: sec,
                             power: 1.0,
-                            exponent: 1.0,
+                            sci_exponent: 1.0,
                         })),
                         Box::new(Token::Num(2.0)),
                     ))
@@ -547,21 +550,27 @@ pub mod tokenizer {
 
             if let Ok(num) = self.buffer.parse::<Num>() {
                 self.tokens.push(Token::Num(num));
-            } else if let Some((conversion, power)) = prefix::get(&self.buffer) {
+            } else if let Some((conversion, prefix)) = dbg!(prefix::get(&self.buffer)) {
                 match conversion {
                     ConversionType::Conversion(conversion) => self.tokens.push(Token::Unit(Unit {
                         conversion,
-                        power: power.map(|x| x.power as Num).unwrap_or(1.0),
-                        exponent: 1.0,
+                        power: 1.0,
+                        sci_exponent: prefix.map(|x| x.power as Num).unwrap_or(0.0),
                     })),
                     ConversionType::DerivedConversion(conversion) => {
-                        self.tokens.push(Token::Group(
-                            conversion
-                                .expand()
-                                .into_iter()
-                                .map(|x| Token::Unit(*x))
-                                .collect(),
-                        ))
+                        let mut tokens = conversion
+                            .expand()
+                            .into_iter()
+                            .map(|x| Token::Unit(*x))
+                            .intersperse(Token::Op(Op::Mul))
+                            .collect::<Vec<_>>();
+                        // TODO: clean this up, please
+                        if let Some(prefix) = prefix {
+                            if let Some(Token::Unit(unit)) = tokens.first_mut() {
+                                unit.sci_exponent += prefix.power as Num;
+                            }
+                        }
+                        self.tokens.push(Token::Group(tokens))
                     }
                 }
             } else {
@@ -594,13 +603,13 @@ pub mod tokenizer {
                     Token::Unit(Unit {
                         conversion: meter,
                         power: 1.0,
-                        exponent: 1.0,
+                        sci_exponent: 0.0,
                     }),
                     Token::Op(Op::Div),
                     Token::Unit(Unit {
                         conversion: sec,
                         power: 1.0,
-                        exponent: 1.0,
+                        sci_exponent: 0.0,
                     }),
                     Token::Op(Op::Pow),
                     Token::Num(2.0),
@@ -620,20 +629,20 @@ pub mod tokenizer {
                     Token::Unit(Unit {
                         conversion: meter,
                         power: 1.0,
-                        exponent: 1.0,
+                        sci_exponent: 0.0,
                     }),
                     Token::Op(Op::Div),
                     Token::Group(vec![
                         Token::Unit(Unit {
                             conversion: sec,
                             power: 1.0,
-                            exponent: 1.0,
+                            sci_exponent: 0.0,
                         }),
                         Token::Op(Op::Mul),
                         Token::Unit(Unit {
                             conversion: sec,
                             power: 1.0,
-                            exponent: 1.0,
+                            sci_exponent: 0.0,
                         })
                     ]),
                 ]

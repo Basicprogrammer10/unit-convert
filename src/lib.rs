@@ -1,3 +1,5 @@
+#![feature(iter_intersperse)]
+
 pub mod args;
 pub mod dimension;
 pub mod input;
