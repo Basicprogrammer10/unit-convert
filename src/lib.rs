@@ -1,4 +1,5 @@
 #![feature(iter_intersperse)]
+#![feature(decl_macro)]
 
 pub mod args;
 pub mod dimension;

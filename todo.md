@@ -16,3 +16,7 @@
 - [ ] Scientific notation for inputs and outputs
 - [x] Respect unit case?
 - [ ] Add auto-generated unit ids to impl PartialEq for dyn Converter
+
+## Time spent on this project
+
+- 14:35 from misc repo

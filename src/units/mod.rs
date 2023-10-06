@@ -2,7 +2,8 @@ use std::fmt::{Debug, Display};
 
 use crate::Num;
 
-use self::derived::{DerivedConversion, DERIVED_UNITS};
+use self::derived::DerivedConversion;
+pub mod angle;
 pub mod derived;
 pub mod electric_current;
 pub mod length;
@@ -13,6 +14,7 @@ pub mod temperature;
 pub mod time;
 
 pub const UNIT_SPACES: &[&dyn UnitSpace] = &[
+    &angle::Angle,
     &electric_current::ElectricCurrent,
     &length::Length,
     &luminous_intensity::LuminousIntensity,
@@ -24,6 +26,7 @@ pub const UNIT_SPACES: &[&dyn UnitSpace] = &[
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum Space {
+    Angle,
     ElectricCurrent,
     Length,
     LuminousIntensity,
@@ -86,12 +89,7 @@ pub fn find_unit(s: &str) -> Option<ConversionType> {
     UNIT_SPACES
         .iter()
         .find_map(|space| space.get(s).map(|x| ConversionType::Conversion(*x)))
-        .or_else(|| {
-            DERIVED_UNITS
-                .iter()
-                .find(|x| x.name() == s || x.aliases().contains(&s))
-                .map(|x| ConversionType::DerivedConversion(*x))
-        })
+        .or_else(|| derived::get(s).map(|x| ConversionType::DerivedConversion(x)))
 }
 
 impl ConversionType {
@@ -126,6 +124,7 @@ impl Display for dyn Conversion {
 impl Display for Space {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(match self {
+            Space::Angle => "angle",
             Space::ElectricCurrent => "electric current",
             Space::Length => "length",
             Space::LuminousIntensity => "luminous intensity",
