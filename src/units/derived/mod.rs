@@ -4,7 +4,7 @@ use crate::{dimension::Unit, Num};
 
 use super::{length, mass, time, Conversion, Space};
 
-pub const DERIVED_UNITS: &[&'static dyn DerivedConversion] = &[&Newton, &Joule, &PoundForce];
+pub const DERIVED_UNITS: &[&'static dyn DerivedConversion] = &[&Newton, &Joule, &PoundForce, &Hz];
 
 pub trait DerivedConversion {
     fn name(&self) -> &'static str;
@@ -97,6 +97,13 @@ macro_rules! impl_derived_units {
 }
 
 impl_derived_units! {
+    /// `s^{-1}`
+    Hz => [
+        <| [
+            Unit::new(&time::Second, -1.0, 0.0)
+        ],
+        metric = true
+    ],
     /// `kg*m*s^{−2}`
     Newton => [
         <| [

@@ -15,3 +15,4 @@
 - [ ] Add lots of wacky units
 - [ ] Scientific notation for inputs and outputs
 - [x] Respect unit case?
+- [ ] Add auto-generated unit ids to impl PartialEq for dyn Converter

@@ -78,7 +78,7 @@ pub trait Conversion {
 
     /// Checks if the given name is the name or an alias of this unit.
     fn is_alias(&self, name: &str) -> bool {
-        self.name() == name || self.aliases().contains(&name)
+        self.name() == name.to_ascii_lowercase() || self.aliases().contains(&name)
     }
 }
 
