@@ -32,6 +32,7 @@ pub struct DerivedConversion {
     pub metric: bool,
 }
 
+#[inline]
 pub fn get(s: &str) -> Option<&'static DerivedConversion> {
     DERIVED_UNITS.iter().find_map(|space| {
         space

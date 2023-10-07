@@ -537,34 +537,60 @@ pub mod tokenizer {
             if let Ok(num) = self.buffer.parse::<Num>() {
                 self.tokens.push(Token::Num(num));
             } else if let Some((conversion, prefix)) = prefix::get(&self.buffer) {
-                match conversion {
-                    ConversionType::Conversion(conversion) => self.tokens.push(Token::Unit(Unit {
-                        conversion,
-                        power: 1.0,
-                        sci_exponent: prefix.map(|x| x.power as Num).unwrap_or(0.0),
-                    })),
-                    ConversionType::DerivedConversion(conversion) => {
-                        let mut tokens = conversion
-                            .expand
-                            .iter()
-                            .map(|x| Token::Unit(*x))
-                            .intersperse(Token::Op(Op::Mul))
-                            .collect::<Vec<_>>();
-                        // TODO: clean this up, please
-                        if let Some(prefix) = prefix {
-                            if let Some(Token::Unit(unit)) = tokens.first_mut() {
-                                unit.sci_exponent += prefix.power as Num;
-                            }
-                        }
-                        self.tokens.push(Token::Group(tokens))
-                    }
-                }
+                add_conversion_tokens(
+                    &mut self.tokens,
+                    conversion,
+                    prefix.map(|x| x.power as Num).unwrap_or(0.0),
+                );
             } else {
                 bail!("Invalid token: {}", self.buffer);
             }
 
             self.buffer.clear();
             Ok(())
+        }
+    }
+
+    pub fn add_conversion_tokens(
+        tokens: &mut Vec<Token>,
+        conversion: ConversionType,
+        sci_exponent: Num,
+    ) {
+        match conversion {
+            ConversionType::Conversion(conversion) => tokens.push(Token::Unit(Unit {
+                conversion,
+                power: 1.0,
+                sci_exponent,
+            })),
+            ConversionType::DerivedConversion(conversion) => {
+                let mut new_tokens = conversion
+                    .expand
+                    .iter()
+                    .map(|x| Token::Unit(*x))
+                    .intersperse(Token::Op(Op::Mul))
+                    .collect::<Vec<_>>();
+                // TODO: clean this up, please
+                if let Some(Token::Unit(unit)) = new_tokens.first_mut() {
+                    unit.sci_exponent += sci_exponent;
+                }
+                tokens.push(Token::Group(new_tokens))
+            }
+            ConversionType::Shorthand(shorthand) => {
+                for (i, e) in shorthand.unit.iter().enumerate() {
+                    match e.conversion {
+                        ConversionType::DerivedConversion(..) | ConversionType::Conversion(..) => {
+                            add_conversion_tokens(
+                                tokens,
+                                e.conversion.clone(),
+                                e.sci_exponent + if i == 0 { sci_exponent } else { 0.0 },
+                            )
+                        }
+                        ConversionType::Shorthand(..) => unreachable!(),
+                    }
+                    tokens.push(Token::Op(Op::Mul));
+                }
+                tokens.pop();
+            }
         }
     }
 

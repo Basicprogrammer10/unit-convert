@@ -14,8 +14,7 @@
 - [x] Support derived units Ex: J expands to ($kg*m^2*s^{−2}$)
 - [ ] Scientific notation for inputs and outputs
 - [x] Respect unit case?
-- [ ] Unit shortcuts
-  - [ ] kWh => kW\*h
+- [x] Unit shortcuts
 - [x] maybe like dont use dynamic dispatch
 - [x] Fix `1 ohm => 0.000001 ohm*ohm/ohm`.
       Should return 1.

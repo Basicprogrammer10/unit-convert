@@ -30,8 +30,15 @@ macro_rules! bench_parse_components {
 
 fn criterion_benchmark(c: &mut Criterion) {
     bench_parse_components!(c, "m/s^2");
-    bench_parse_components!(c, "m/s/s");
-    bench_parse_components!(c, "m/(s*s)");
+    // bench_parse_components!(c, "m/s/s");
+    // bench_parse_components!(c, "m/(s*s)");
+
+    c.bench_function("lookup_unit", |b| {
+        b.iter(|| unit_convert::units::find_unit(black_box("m")))
+    });
+    c.bench_function("lookup_unit_shorthand", |b| {
+        b.iter(|| unit_convert::units::find_unit(black_box("Wh")))
+    });
 }
 
 criterion_group!(benches, criterion_benchmark);

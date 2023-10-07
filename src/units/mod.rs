@@ -2,7 +2,9 @@ use std::fmt::{Debug, Display};
 
 use crate::Num;
 
-use self::derived::DerivedConversion;
+use self::{derived::DerivedConversion, shorthands::Shorthand};
+pub mod shorthands;
+
 pub mod angle;
 pub mod derived;
 pub mod electric_current;
@@ -39,10 +41,11 @@ pub enum Space {
     Dynamic,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub enum ConversionType {
     Conversion(&'static Conversion),
     DerivedConversion(&'static DerivedConversion),
+    Shorthand(&'static Shorthand),
 }
 
 pub struct UnitSpace {
@@ -52,12 +55,6 @@ pub struct UnitSpace {
     pub space: Space,
     /// All of the units in the space.
     pub units: &'static [&'static Conversion],
-}
-
-impl UnitSpace {
-    pub fn get(&self, name: &str) -> Option<&'static Conversion> {
-        self.units.iter().find(|u| u.is_alias(name)).copied()
-    }
 }
 
 pub struct Conversion {
@@ -78,18 +75,17 @@ pub struct Conversion {
     pub special: bool,
 }
 
+impl UnitSpace {
+    pub fn get(&self, name: &str) -> Option<&'static Conversion> {
+        self.units.iter().find(|u| u.is_alias(name)).copied()
+    }
+}
+
 impl Conversion {
     /// Checks if the given name is the name or an alias of this unit.
     pub fn is_alias(&self, name: &str) -> bool {
         self.name == name.to_ascii_lowercase() || self.aliases.contains(&name)
     }
-}
-
-pub fn find_unit(s: &str) -> Option<ConversionType> {
-    UNIT_SPACES
-        .iter()
-        .find_map(|space| space.get(s).map(ConversionType::Conversion))
-        .or_else(|| derived::get(s).map(ConversionType::DerivedConversion))
 }
 
 impl ConversionType {
@@ -105,8 +101,17 @@ impl ConversionType {
         match self {
             ConversionType::Conversion(c) => c.metric,
             ConversionType::DerivedConversion(c) => c.metric,
+            ConversionType::Shorthand(c) => c.metric,
         }
     }
+}
+
+pub fn find_unit(s: &str) -> Option<ConversionType> {
+    UNIT_SPACES
+        .iter()
+        .find_map(|space| space.get(s).map(ConversionType::Conversion))
+        .or_else(|| derived::get(s).map(ConversionType::DerivedConversion))
+        .or_else(|| shorthands::get(s).map(ConversionType::Shorthand))
 }
 
 impl Display for UnitSpace {
@@ -148,6 +153,17 @@ impl PartialEq for Conversion {
         // ew
         // todo: make this less bad
         self.name == other.name
+    }
+}
+
+impl PartialEq for ConversionType {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Conversion(l0), Self::Conversion(r0)) => l0 == r0,
+            (Self::DerivedConversion(l0), Self::DerivedConversion(r0)) => l0 == r0,
+            (Self::Shorthand(..), Self::Shorthand(..)) => unreachable!(),
+            _ => false,
+        }
     }
 }
 
