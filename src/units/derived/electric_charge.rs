@@ -28,7 +28,6 @@ impl_derived_units! {
         <| join_arrays!(_COULOMB, [
             constant!(9.64853321233100184e4)
         ]),
-        aliases = ["F"],
         metric = true
     ],
     AMPERE_HOUR => [

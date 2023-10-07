@@ -19,6 +19,9 @@
 - [ ] Unit shortcuts
   - [ ] kWh => kW\*h
 - [x] maybe like dont use dynamic dispatch
+- [ ] Fix `1 ohm => 0.000001 ohm*ohm/ohm`.
+      Should return 1.
+- [x] Add all [SI derived units](https://en.wikipedia.org/wiki/SI_derived_unit)
 
 ## Time spent on this project
 

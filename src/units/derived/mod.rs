@@ -6,17 +6,23 @@ use crate::dimension::Unit;
 pub mod electric_charge;
 pub mod energy;
 pub mod force;
+pub mod illuminance;
 pub mod misc;
 pub mod pressure;
+pub mod radiation_dose;
+pub mod radioactivity;
 pub mod voltage;
 
 pub const DERIVED_UNITS: &[&[&DerivedConversion]] = &[
-    misc::UNITS,
+    electric_charge::UNITS,
+    energy::UNITS,
     force::UNITS,
-    &pressure::UNITS,
-    &energy::UNITS,
-    &electric_charge::UNITS,
-    &voltage::UNITS,
+    illuminance::UNITS,
+    misc::UNITS,
+    pressure::UNITS,
+    radiation_dose::UNITS,
+    radioactivity::UNITS,
+    voltage::UNITS,
 ];
 
 pub struct DerivedConversion {
