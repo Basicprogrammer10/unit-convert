@@ -14,14 +14,14 @@ pub mod temperature;
 pub mod time;
 
 pub const UNIT_SPACES: &[&UnitSpace] = &[
-    &angle::Angle,
-    &electric_current::ElectricCurrent,
-    &length::Length,
-    &luminous_intensity::LuminousIntensity,
-    &mass::Mass,
-    &quantity::Quantity,
-    &temperature::Temperature,
-    &time::Time,
+    &angle::ANGLE,
+    &electric_current::ELECTRIC_CURRENT,
+    &length::LENGTH,
+    &luminous_intensity::LUMINOUS_INTENSITY,
+    &mass::MASS,
+    &quantity::QUANTITY,
+    &temperature::TEMPERATURE,
+    &time::TIME,
 ];
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
@@ -167,7 +167,7 @@ macro_rules! impl_units {
 
         pub const $space: UnitSpace = UnitSpace {
             name: lower_strify!($space),
-            space: Space::$space,
+            space: paste::expr! { Space::[< $space:camel >] },
             units: &[$(&$struct,)*]
         };
 
@@ -175,7 +175,7 @@ macro_rules! impl_units {
             $(#[$meta])?
             pub const $struct: Conversion = Conversion {
                 name: lower_strify!($struct),
-                space: Space::$space,
+                space: paste::expr! { Space::[< $space:camel >] },
                 to_base: $to_base,
                 from_base: $from_base,
                 aliases: &[$($($aliases),*)?],

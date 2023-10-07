@@ -1,8 +1,8 @@
 use crate::impl_units;
 
 impl_units! {
-    ElectricCurrent => {
-        Ampere => [
+    ELECTRIC_CURRENT => {
+        AMPERE => [
             <| |a| a,
             |> |a| a,
             aliases = ["A", "amp"],

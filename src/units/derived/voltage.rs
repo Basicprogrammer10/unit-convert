@@ -4,23 +4,23 @@ use crate::{
     units::{derived::constant, electric_current, length, mass, time},
 };
 
-const VOLT: [Unit; 4] = [
-    Unit::new(&mass::Gram, 1.0, 3.0),
-    Unit::new(&length::Meter, 2.0, 0.0),
-    Unit::new(&time::Second, -3.0, 0.0),
-    Unit::new(&electric_current::Ampere, -1.0, 0.0),
+const _VOLT: [Unit; 4] = [
+    Unit::new(&mass::GRAM, 1.0, 3.0),
+    Unit::new(&length::METER, 2.0, 0.0),
+    Unit::new(&time::SECOND, -3.0, 0.0),
+    Unit::new(&electric_current::AMPERE, -1.0, 0.0),
 ];
 
 impl_derived_units! {
     /// `kg*m^2*s^{-3}*A^{-1}
-    Volt => [
-        <| VOLT,
+    VOLT => [
+        <| _VOLT,
         aliases = ["V"],
         metric = true
     ],
     /// `10^−6 V`
-    Statvolt => [
-        <| join_arrays!(VOLT, [
+    STATVOLT => [
+        <| join_arrays!(_VOLT, [
             constant!(299.792458)
         ]),
         aliases = ["statV"],

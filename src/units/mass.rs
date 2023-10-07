@@ -1,19 +1,19 @@
 use crate::impl_units;
 
 impl_units! {
-    Mass => {
-        Gram => [
+    MASS => {
+        GRAM => [
             <| |g| g,
             |> |g| g,
             aliases = ["g"],
             metric = true
         ],
-        Tonne => [
+        TONNE => [
             <| |t| t * 1000000.0,
             |> |g| g / 100000.0,
             aliases = ["t"]
         ],
-        Pound => [
+        POUND => [
             <| |lb| lb * 453.59237,
             |> |g| g / 453.59237,
             aliases = ["lb"]

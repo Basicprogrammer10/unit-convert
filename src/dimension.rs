@@ -285,7 +285,7 @@ pub mod expander {
     mod test {
         use crate::{
             dimension::{Op, Token, Unit},
-            units::{length::Meter, time::Second},
+            units::{length::METER, time::SECOND},
         };
 
         use super::Expander;
@@ -295,14 +295,14 @@ pub mod expander {
             let inp = Token::Tree(
                 Op::Div,
                 Box::new(Token::Unit(Unit {
-                    conversion: &Meter,
+                    conversion: &METER,
                     power: 1.0,
                     sci_exponent: 0.0,
                 })),
                 Box::new(Token::Tree(
                     Op::Pow,
                     Box::new(Token::Unit(Unit {
-                        conversion: &Second,
+                        conversion: &SECOND,
                         power: 1.0,
                         sci_exponent: 0.0,
                     })),
@@ -315,12 +315,12 @@ pub mod expander {
                 exp,
                 vec![
                     Unit {
-                        conversion: &Meter,
+                        conversion: &METER,
                         power: 1.0,
                         sci_exponent: 0.0,
                     },
                     Unit {
-                        conversion: &Second,
+                        conversion: &SECOND,
                         power: -2.0,
                         sci_exponent: 0.0,
                     }
@@ -421,19 +421,19 @@ pub mod tree {
         use super::super::{Op, Token};
         use super::Treeifyer;
         use crate::dimension::Unit;
-        use crate::units::time::{Minute, Second};
+        use crate::units::time::{MINUTE, SECOND};
 
         #[test]
         fn test_tree() {
             let tokens = vec![
                 Token::Unit(Unit {
-                    conversion: &Minute,
+                    conversion: &MINUTE,
                     power: 1.0,
                     sci_exponent: 1.0,
                 }),
                 Token::Op(Op::Div),
                 Token::Unit(Unit {
-                    conversion: &Second,
+                    conversion: &SECOND,
                     power: 1.0,
                     sci_exponent: 1.0,
                 }),
@@ -448,14 +448,14 @@ pub mod tree {
                 Token::Tree(
                     Op::Div,
                     Box::new(Token::Unit(Unit {
-                        conversion: &Minute,
+                        conversion: &MINUTE,
                         power: 1.0,
                         sci_exponent: 1.0,
                     })),
                     Box::new(Token::Tree(
                         Op::Pow,
                         Box::new(Token::Unit(Unit {
-                            conversion: &Second,
+                            conversion: &SECOND,
                             power: 1.0,
                             sci_exponent: 1.0,
                         })),
@@ -581,7 +581,7 @@ pub mod tokenizer {
     mod test {
         use crate::{
             dimension::Unit,
-            units::{length::Meter, time::Second},
+            units::{length::METER, time::SECOND},
         };
 
         use super::{Op, Token, Tokenizer};
@@ -593,13 +593,13 @@ pub mod tokenizer {
                 tokens,
                 vec![
                     Token::Unit(Unit {
-                        conversion: &Meter,
+                        conversion: &METER,
                         power: 1.0,
                         sci_exponent: 0.0,
                     }),
                     Token::Op(Op::Div),
                     Token::Unit(Unit {
-                        conversion: &Second,
+                        conversion: &SECOND,
                         power: 1.0,
                         sci_exponent: 0.0,
                     }),
@@ -616,20 +616,20 @@ pub mod tokenizer {
                 tokens,
                 vec![
                     Token::Unit(Unit {
-                        conversion: &Meter,
+                        conversion: &METER,
                         power: 1.0,
                         sci_exponent: 0.0,
                     }),
                     Token::Op(Op::Div),
                     Token::Group(vec![
                         Token::Unit(Unit {
-                            conversion: &Second,
+                            conversion: &SECOND,
                             power: 1.0,
                             sci_exponent: 0.0,
                         }),
                         Token::Op(Op::Mul),
                         Token::Unit(Unit {
-                            conversion: &Second,
+                            conversion: &SECOND,
                             power: 1.0,
                             sci_exponent: 0.0,
                         })

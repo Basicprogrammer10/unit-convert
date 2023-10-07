@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use super::{Conversion, Space};
-use crate::{dimension::Unit, Num};
+use crate::dimension::Unit;
 
 pub mod electric_charge;
 pub mod energy;

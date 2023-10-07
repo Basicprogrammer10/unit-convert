@@ -1,14 +1,14 @@
 use crate::impl_units;
 
 impl_units! {
-    Quantity => {
-        Number => [
+    QUANTITY => {
+        NUMBER => [
             <| |n| n,
             |> |n| n,
             aliases = ["n", "num", "x"],
             metric = true
         ],
-        Mole => [
+        MOLE => [
             <| |m| m * 6.02214076e23,
             |> |n| n / 6.02214076e23,
             aliases = ["mol"]
