@@ -17,7 +17,7 @@ pub struct Dimensions {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Unit {
-    conversion: &'static dyn Conversion,
+    conversion: &'static Conversion,
     power: Num,
     /// * 10^exponent
     sci_exponent: Num,
@@ -56,7 +56,7 @@ impl Unit {
     /// I should have probably thought of a better name...
     pub fn is_special(&self) -> bool {
         // TODO: add type ids or something :sob:
-        self.conversion.name() == "varnum"
+        self.conversion.name == "virtual-unit"
     }
 }
 
@@ -67,9 +67,9 @@ impl Dimensions {
             let old = value;
             for _ in 0..i.power.abs() as usize {
                 value = if i.power.signum() > 0.0 {
-                    i.conversion.to_base(value)
+                    (i.conversion.to_base)(value)
                 } else {
-                    i.conversion.from_base(value)
+                    (i.conversion.from_base)(value)
                 }
             }
             value *= (10 as Num).powf(i.sci_exponent);
@@ -77,7 +77,7 @@ impl Dimensions {
                 debug,
                 "{: <8} =[ {: <6} ]=> {}",
                 old,
-                i.conversion.name(),
+                i.conversion.name,
                 value
             );
         }
@@ -89,9 +89,9 @@ impl Dimensions {
             let old = value;
             for _ in 0..i.power.abs() as usize {
                 value = if i.power.signum() > 0.0 {
-                    i.conversion.from_base(value)
+                    (i.conversion.from_base)(value)
                 } else {
-                    i.conversion.to_base(value)
+                    (i.conversion.to_base)(value)
                 }
             }
             value *= (10 as Num).powf(-i.sci_exponent);
@@ -99,7 +99,7 @@ impl Dimensions {
                 debug,
                 "{: <8.5} =[ {: <6} ]=> {:.5}",
                 old,
-                i.conversion.name(),
+                i.conversion.name,
                 value
             );
         }
@@ -114,7 +114,7 @@ impl Dimensions {
         for i in &self.units {
             if let Some(j) = new_units
                 .iter_mut()
-                .find(|x| x.conversion.space() == i.conversion.space())
+                .find(|x| x.conversion.space == i.conversion.space)
             {
                 j.sci_exponent += i.sci_exponent;
                 j.power += i.power
@@ -128,7 +128,7 @@ impl Dimensions {
 }
 
 impl Unit {
-    pub const fn new(conversion: &'static dyn Conversion, power: Num, sci_exponent: Num) -> Self {
+    pub const fn new(conversion: &'static Conversion, power: Num, sci_exponent: Num) -> Self {
         Self {
             conversion,
             power,
@@ -162,9 +162,9 @@ impl FromStr for Dimensions {
 impl Display for Dimensions {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = if f.alternate() {
-            |unit: &Unit| Cow::Owned(unit.conversion.space().to_string())
+            |unit: &Unit| Cow::Owned(unit.conversion.space.to_string())
         } else {
-            |unit: &Unit| Cow::Borrowed(unit.conversion.name())
+            |unit: &Unit| Cow::Borrowed(unit.conversion.name)
         };
 
         let mut out = String::new();
@@ -190,16 +190,12 @@ impl PartialEq for Dimensions {
     fn eq(&self, other: &Self) -> bool {
         let mut self_dimensions = HashMap::new();
         for unit in self.units.iter().filter(|x| !x.is_special()) {
-            *self_dimensions
-                .entry(unit.conversion.space())
-                .or_insert(0.0) += unit.power;
+            *self_dimensions.entry(unit.conversion.space).or_insert(0.0) += unit.power;
         }
 
         let mut other_dimensions = HashMap::new();
         for unit in other.units.iter().filter(|x| !x.is_special()) {
-            *other_dimensions
-                .entry(unit.conversion.space())
-                .or_insert(0.0) += unit.power;
+            *other_dimensions.entry(unit.conversion.space).or_insert(0.0) += unit.power;
         }
 
         if self_dimensions.len() != other_dimensions.len() {
@@ -289,27 +285,24 @@ pub mod expander {
     mod test {
         use crate::{
             dimension::{Op, Token, Unit},
-            units::{length::Meter, time::Second, Conversion},
+            units::{length::Meter, time::Second},
         };
 
         use super::Expander;
 
         #[test]
         fn test_expander() {
-            let sec = &Second as &'static dyn Conversion;
-            let meter = &Meter as &'static dyn Conversion;
-
             let inp = Token::Tree(
                 Op::Div,
                 Box::new(Token::Unit(Unit {
-                    conversion: meter,
+                    conversion: &Meter,
                     power: 1.0,
                     sci_exponent: 0.0,
                 })),
                 Box::new(Token::Tree(
                     Op::Pow,
                     Box::new(Token::Unit(Unit {
-                        conversion: sec,
+                        conversion: &Second,
                         power: 1.0,
                         sci_exponent: 0.0,
                     })),
@@ -322,12 +315,12 @@ pub mod expander {
                 exp,
                 vec![
                     Unit {
-                        conversion: meter,
+                        conversion: &Meter,
                         power: 1.0,
                         sci_exponent: 0.0,
                     },
                     Unit {
-                        conversion: sec,
+                        conversion: &Second,
                         power: -2.0,
                         sci_exponent: 0.0,
                     }
@@ -428,25 +421,19 @@ pub mod tree {
         use super::super::{Op, Token};
         use super::Treeifyer;
         use crate::dimension::Unit;
-        use crate::units::{
-            time::{Minute, Second},
-            Conversion,
-        };
+        use crate::units::time::{Minute, Second};
 
         #[test]
         fn test_tree() {
-            let sec = &Second as &'static dyn Conversion;
-            let min = &Minute as &'static dyn Conversion;
-
             let tokens = vec![
                 Token::Unit(Unit {
-                    conversion: min,
+                    conversion: &Minute,
                     power: 1.0,
                     sci_exponent: 1.0,
                 }),
                 Token::Op(Op::Div),
                 Token::Unit(Unit {
-                    conversion: sec,
+                    conversion: &Second,
                     power: 1.0,
                     sci_exponent: 1.0,
                 }),
@@ -461,14 +448,14 @@ pub mod tree {
                 Token::Tree(
                     Op::Div,
                     Box::new(Token::Unit(Unit {
-                        conversion: min,
+                        conversion: &Minute,
                         power: 1.0,
                         sci_exponent: 1.0,
                     })),
                     Box::new(Token::Tree(
                         Op::Pow,
                         Box::new(Token::Unit(Unit {
-                            conversion: sec,
+                            conversion: &Second,
                             power: 1.0,
                             sci_exponent: 1.0,
                         })),
@@ -567,7 +554,7 @@ pub mod tokenizer {
                     })),
                     ConversionType::DerivedConversion(conversion) => {
                         let mut tokens = conversion
-                            .expand()
+                            .expand
                             .iter()
                             .map(|x| Token::Unit(*x))
                             .intersperse(Token::Op(Op::Mul))
@@ -594,28 +581,25 @@ pub mod tokenizer {
     mod test {
         use crate::{
             dimension::Unit,
-            units::{length::Meter, time::Second, Conversion},
+            units::{length::Meter, time::Second},
         };
 
         use super::{Op, Token, Tokenizer};
 
         #[test]
         fn test_tokenize() {
-            let sec = &Second as &'static dyn Conversion;
-            let meter = &Meter as &'static dyn Conversion;
-
             let tokens = Tokenizer::tokenize("m/s^2").unwrap();
             assert_eq!(
                 tokens,
                 vec![
                     Token::Unit(Unit {
-                        conversion: meter,
+                        conversion: &Meter,
                         power: 1.0,
                         sci_exponent: 0.0,
                     }),
                     Token::Op(Op::Div),
                     Token::Unit(Unit {
-                        conversion: sec,
+                        conversion: &Second,
                         power: 1.0,
                         sci_exponent: 0.0,
                     }),
@@ -627,28 +611,25 @@ pub mod tokenizer {
 
         #[test]
         fn test_tokenize_2() {
-            let sec = &Second as &'static dyn Conversion;
-            let meter = &Meter as &'static dyn Conversion;
-
             let tokens = Tokenizer::tokenize("m / (s * s)").unwrap();
             assert_eq!(
                 tokens,
                 vec![
                     Token::Unit(Unit {
-                        conversion: meter,
+                        conversion: &Meter,
                         power: 1.0,
                         sci_exponent: 0.0,
                     }),
                     Token::Op(Op::Div),
                     Token::Group(vec![
                         Token::Unit(Unit {
-                            conversion: sec,
+                            conversion: &Second,
                             power: 1.0,
                             sci_exponent: 0.0,
                         }),
                         Token::Op(Op::Mul),
                         Token::Unit(Unit {
-                            conversion: sec,
+                            conversion: &Second,
                             power: 1.0,
                             sci_exponent: 0.0,
                         })

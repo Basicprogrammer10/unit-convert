@@ -1,7 +1,7 @@
 use crate::{
     dimension::Unit,
     impl_derived_units, join_arrays,
-    units::{derived::VarNum, electric_current, length, mass, time},
+    units::{derived::constant, electric_current, length, mass, time},
 };
 
 const VOLT: [Unit; 4] = [
@@ -21,7 +21,7 @@ impl_derived_units! {
     /// `10^−6 V`
     Statvolt => [
         <| join_arrays!(VOLT, [
-            Unit::new(&VarNum::new(299.792458), 1.0, 0.0),
+            constant!(299.792458)
         ]),
         aliases = ["statV"],
         metric = true

@@ -1,7 +1,7 @@
 use crate::{
     dimension::Unit,
     impl_derived_units, join_arrays,
-    units::{derived::VarNum, length, mass, time},
+    units::{derived::constant, length, mass, time},
 };
 
 const NEWTON: [Unit; 3] = [
@@ -20,7 +20,7 @@ impl_derived_units! {
     /// `4.448222*N`
     PoundForce => [
         <| join_arrays!(NEWTON, [
-            Unit::new(&VarNum::new(4.448222), 1.0, 0.0)
+            constant!(4.448222)
         ]),
         aliases = ["lbf"],
         metric = true
@@ -28,19 +28,19 @@ impl_derived_units! {
     /// `N*10^{-5}`
     Dyne => [
         <| join_arrays!(NEWTON, [
-            Unit::new(&VarNum::new(1e-5), 1.0, 0.0),
+            constant!(1e-5, 0.0)
         ]),
         aliases = ["dyn"]
     ],
     /// `N*10^3`
     Kip => [
         <| join_arrays!(NEWTON, [
-            Unit::new(&VarNum::new(4448.222), 1.0, 0.0),
+            constant!(4448.222)
         ])
     ],
     Kilopond => [
         <| join_arrays!(NEWTON, [
-            Unit::new(&VarNum::new(9.80665), 1.0, 0.0),
+            constant!(9.80665)
         ])
     ],
     /// `lb*ft*s^{−2}`

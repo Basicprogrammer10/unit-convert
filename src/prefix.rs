@@ -78,11 +78,11 @@ mod test {
     #[test]
     fn test_metric_prefix() {
         let unit = get("kilometer").unwrap();
-        assert_eq!(unit.0.as_conversion().unwrap().name(), "meter");
+        assert_eq!(unit.0.as_conversion().unwrap().name, "meter");
         assert_eq!(unit.1.unwrap().name, "kilo");
 
         let unit = get("km").unwrap();
-        assert_eq!(unit.0.as_conversion().unwrap().name(), "meter");
+        assert_eq!(unit.0.as_conversion().unwrap().name, "meter");
         assert_eq!(unit.1.unwrap().name, "kilo");
     }
 }

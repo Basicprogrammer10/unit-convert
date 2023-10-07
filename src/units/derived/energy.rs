@@ -1,7 +1,7 @@
 use crate::{
     dimension::Unit,
     impl_derived_units, join_arrays,
-    units::{derived::VarNum, length, mass, time},
+    units::{derived::constant, length, mass, time},
 };
 
 const JOULE: [Unit; 3] = [
@@ -31,7 +31,7 @@ impl_derived_units! {
     /// IT thermal unit.
     Btu => [
         <| join_arrays!(JOULE, [
-            Unit::new(&VarNum::new(1055.06), 1.0, 0.0),
+            constant!(1055.06)
         ]),
         metric = true
     ],
@@ -39,7 +39,7 @@ impl_derived_units! {
     /// Thermochemical calorie.
     Calorie => [
         <| join_arrays!(JOULE, [
-            Unit::new(&VarNum::new(4.184), 1.0, 0.0),
+            constant!(4.184)
         ]),
         aliases = ["cal"],
         metric = true
@@ -47,7 +47,7 @@ impl_derived_units! {
     /// `1.602176634×10−19 J`
     Electronvolt => [
         <| join_arrays!(JOULE, [
-            Unit::new(&VarNum::new(1.602176634e-19), 1.0, 0.0),
+            constant!(1.602176634e-19)
         ]),
         aliases = ["eV"],
         metric = true
@@ -55,7 +55,7 @@ impl_derived_units! {
     /// `10−7 J`
     Erg => [
         <| join_arrays!(JOULE, [
-            Unit::new(&VarNum::new(1e-7), 1.0, 0.0),
+            constant!(1e-7)
         ]),
         metric = true
     ],

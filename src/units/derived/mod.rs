@@ -10,7 +10,7 @@ pub mod misc;
 pub mod pressure;
 pub mod voltage;
 
-pub const DERIVED_UNITS: &[&[&'static dyn DerivedConversion]] = &[
+pub const DERIVED_UNITS: &[&[&'static DerivedConversion]] = &[
     misc::UNITS,
     force::UNITS,
     &pressure::UNITS,
@@ -19,64 +19,31 @@ pub const DERIVED_UNITS: &[&[&'static dyn DerivedConversion]] = &[
     &voltage::UNITS,
 ];
 
-pub trait DerivedConversion {
-    fn name(&self) -> &'static str;
-    fn expand(&self) -> &'static [Unit];
-
-    fn is_metric(&self) -> bool {
-        false
-    }
-    fn aliases(&self) -> &'static [&'static str] {
-        &[]
-    }
+pub struct DerivedConversion {
+    pub name: &'static str,
+    pub expand: &'static [Unit],
+    pub aliases: &'static [&'static str],
+    pub metric: bool,
 }
 
-pub struct VarNum {
-    multiplier: Num,
-}
-
-impl VarNum {
-    pub const fn new(multiplier: Num) -> Self {
-        Self { multiplier }
-    }
-}
-
-impl Conversion for VarNum {
-    fn name(&self) -> &'static str {
-        "varnum"
-    }
-
-    fn space(&self) -> Space {
-        Space::Quantity
-    }
-
-    fn to_base(&self, this: Num) -> Num {
-        this * self.multiplier
-    }
-
-    fn from_base(&self, s: Num) -> Num {
-        s / self.multiplier
-    }
-}
-
-pub fn get(s: &str) -> Option<&'static dyn DerivedConversion> {
+pub fn get(s: &str) -> Option<&'static DerivedConversion> {
     DERIVED_UNITS.iter().find_map(|space| {
         space
             .iter()
-            .find(|unit| unit.name() == s || unit.aliases().contains(&s))
+            .find(|unit| unit.name == s || unit.aliases.contains(&s))
             .copied()
     })
 }
 
-impl Debug for dyn DerivedConversion {
+impl Debug for DerivedConversion {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.name())
+        f.write_str(self.name)
     }
 }
 
-impl PartialEq for dyn DerivedConversion {
+impl PartialEq for DerivedConversion {
     fn eq(&self, other: &Self) -> bool {
-        self.name() == other.name()
+        self.name == other.name
     }
 }
 
@@ -93,33 +60,38 @@ macro_rules! impl_derived_units {
         ),*
     } => {
         use crate::units::derived::DerivedConversion;
-        pub const UNITS: &[&'static dyn DerivedConversion] = &[$(&$name),*];
+        pub const UNITS: &[&'static DerivedConversion] = &[$(&$name),*];
 
         $(
             $(#[$meta])*
-            pub struct $name;
-
-            impl DerivedConversion for $name {
-                fn name(&self) -> &'static str {
-                    identconv::lower_strify!($name)
-                }
-
-                fn expand(&self) -> &'static [Unit] {
-                    const UNITS: &[Unit] = &$unit;
-                    UNITS
-                }
-
-                fn aliases(&self) -> &'static [&'static str] {
-                    &[$($($aliases),*)?]
-                }
-
-                fn is_metric(&self) -> bool {
-                    false
-                    $(;$metric)?
-                }
-            }
+            pub const $name: DerivedConversion = DerivedConversion {
+                name: identconv::lower_strify!($name),
+                expand: &$unit,
+                aliases: &[$($($aliases),*)?],
+                metric: false $(|| $metric)?
+            };
         )*
     };
+}
+
+pub macro constant {
+    ($conversion:literal, $exponent:literal) => {
+        Unit::new(
+            &Conversion {
+                name: "virtual-unit",
+                space: Space::Dynamic,
+                to_base: |x| x * $conversion,
+                from_base: |x| x / $conversion,
+                aliases: &[],
+                metric: false,
+            },
+            1.0,
+            0.0,
+        )
+    },
+    ($conversion:literal) => {
+        constant!($conversion, 0.0)
+    }
 }
 
 #[macro_export]

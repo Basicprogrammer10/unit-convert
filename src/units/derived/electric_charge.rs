@@ -1,7 +1,7 @@
 use crate::{
     dimension::Unit,
     impl_derived_units, join_arrays,
-    units::{derived::VarNum, electric_current, time},
+    units::{derived::constant, electric_current, time},
 };
 
 const COULOMB: [Unit; 2] = [
@@ -18,7 +18,7 @@ impl_derived_units! {
     /// `1.602176634×10−19 C`
     ElementaryCharge => [
         <| join_arrays!(COULOMB, [
-            Unit::new(&VarNum::new(1.602176634e-19), 1.0, 0.0),
+            constant!(1.602176634e-19)
         ]),
         aliases = ["e"],
         metric = true
@@ -26,7 +26,7 @@ impl_derived_units! {
     /// `9.64853321233100184e4 C`
     Faraday => [
         <| join_arrays!(COULOMB, [
-            Unit::new(&VarNum::new(9.64853321233100184e4), 1.0, 0.0),
+            constant!(9.64853321233100184e4)
         ]),
         aliases = ["F"],
         metric = true
