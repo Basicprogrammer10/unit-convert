@@ -18,6 +18,7 @@
 - [ ] Add auto-generated unit ids to impl PartialEq for dyn Converter
 - [ ] Unit shortcuts
   - [ ] kWh => kW\*h
+- [ ] maybe like dont use dynamic dispatch
 
 ## Time spent on this project
 

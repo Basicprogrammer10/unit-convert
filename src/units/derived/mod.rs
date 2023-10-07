@@ -3,13 +3,21 @@ use std::fmt::Debug;
 use super::{Conversion, Space};
 use crate::{dimension::Unit, Num};
 
+pub mod electric_charge;
 pub mod energy;
 pub mod force;
 pub mod misc;
 pub mod pressure;
+pub mod voltage;
 
-pub const DERIVED_UNITS: &[&[&'static dyn DerivedConversion]] =
-    &[misc::UNITS, force::UNITS, &pressure::UNITS, &energy::UNITS];
+pub const DERIVED_UNITS: &[&[&'static dyn DerivedConversion]] = &[
+    misc::UNITS,
+    force::UNITS,
+    &pressure::UNITS,
+    &energy::UNITS,
+    &electric_charge::UNITS,
+    &voltage::UNITS,
+];
 
 pub trait DerivedConversion {
     fn name(&self) -> &'static str;
