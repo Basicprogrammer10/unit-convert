@@ -12,14 +12,12 @@
 - [x] Nice cli
 - [x] [Split into new repo?](https://docs.github.com/en/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository)
 - [x] Support derived units Ex: J expands to ($kg*m^2*s^{−2}$)
-- [ ] Add lots of wacky units
 - [ ] Scientific notation for inputs and outputs
 - [x] Respect unit case?
-- [ ] Add auto-generated unit ids to impl PartialEq for dyn Converter
 - [ ] Unit shortcuts
   - [ ] kWh => kW\*h
 - [x] maybe like dont use dynamic dispatch
-- [ ] Fix `1 ohm => 0.000001 ohm*ohm/ohm`.
+- [x] Fix `1 ohm => 0.000001 ohm*ohm/ohm`.
       Should return 1.
 - [x] Add all [SI derived units](https://en.wikipedia.org/wiki/SI_derived_unit)
 

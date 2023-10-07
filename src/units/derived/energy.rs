@@ -60,7 +60,7 @@ impl_derived_units! {
         metric = true
     ],
     /// The `lbf` part of the Foot-Pound (`ft*lbf`).
-    LBF => [
+    POUND_FORCE => [
         <| [
             Unit::new(&length::FOOT, 2.0, 1.0),
             Unit::new(&time::SECOND, -2.0, 0.0),

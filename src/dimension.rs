@@ -63,7 +63,7 @@ impl Dimensions {
                     (i.conversion.from_base)(value)
                 }
             }
-            value *= (10 as Num).powf(i.sci_exponent);
+            value *= (10 as Num).powf(i.sci_exponent * i.power.signum());
             debug_println!(
                 debug,
                 "{: <8} =[ {: <6} ]=> {}",
@@ -85,7 +85,7 @@ impl Dimensions {
                     (i.conversion.to_base)(value)
                 }
             }
-            value *= (10 as Num).powf(-i.sci_exponent);
+            value *= (10 as Num).powf(-i.sci_exponent * i.power.signum());
             debug_println!(
                 debug,
                 "{: <8.5} =[ {: <6} ]=> {:.5}",
@@ -107,7 +107,7 @@ impl Dimensions {
                 .iter_mut()
                 .find(|x| x.conversion.space == i.conversion.space)
             {
-                j.sci_exponent += i.sci_exponent;
+                j.sci_exponent += i.sci_exponent * i.power.signum();
                 j.power += i.power
             } else {
                 new_units.push(i.to_owned());

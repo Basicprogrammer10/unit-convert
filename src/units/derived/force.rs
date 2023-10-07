@@ -17,14 +17,6 @@ impl_derived_units! {
         aliases = ["N"],
         metric = true
     ],
-    /// `4.448222*N`
-    POUND_FORCE => [
-        <| join_arrays!(_NEWTON, [
-            constant!(4.448222)
-        ]),
-        aliases = ["lbf"],
-        metric = true
-    ],
     /// `N*10^{-5}`
     DYNE => [
         <| join_arrays!(_NEWTON, [

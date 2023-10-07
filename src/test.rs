@@ -2,8 +2,14 @@ use std::str::FromStr;
 
 use anyhow::Result;
 use approx::assert_abs_diff_eq;
+use hashbrown::HashSet;
 
-use crate::{dimension::Dimensions, input, Num};
+use crate::{
+    dimension::Dimensions,
+    input,
+    units::{derived::DERIVED_UNITS, UNIT_SPACES},
+    Num,
+};
 
 const ERROR: Num = 0.01;
 
@@ -43,4 +49,40 @@ tests! {
         "10m/s^2 => mi/h^2" => 80529.71, // 80530.0?
         "10 m/s^3 => yard/s^3" => 10.94
     ]
+}
+
+#[test]
+fn test_name_collisions() {
+    let mut sack = HashSet::new();
+    let mut collisions = HashSet::new();
+
+    for space in UNIT_SPACES {
+        for unit in space.units {
+            if !sack.insert(unit.name) {
+                collisions.insert(unit.name);
+            }
+
+            for alias in unit.aliases {
+                if !sack.insert(alias) {
+                    collisions.insert(alias);
+                }
+            }
+        }
+    }
+
+    for space in DERIVED_UNITS {
+        for unit in space.iter() {
+            if !sack.insert(unit.name) {
+                collisions.insert(unit.name);
+            }
+
+            for alias in unit.aliases {
+                if !sack.insert(alias) {
+                    collisions.insert(alias);
+                }
+            }
+        }
+    }
+
+    assert!(collisions.is_empty(), "name collisions: {:?}", collisions);
 }
