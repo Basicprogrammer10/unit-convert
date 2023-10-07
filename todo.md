@@ -16,6 +16,8 @@
 - [ ] Scientific notation for inputs and outputs
 - [x] Respect unit case?
 - [ ] Add auto-generated unit ids to impl PartialEq for dyn Converter
+- [ ] Unit shortcuts
+  - [ ] kWh => kW\*h
 
 ## Time spent on this project
 

@@ -3,10 +3,13 @@ use std::fmt::Debug;
 use super::{Conversion, Space};
 use crate::{dimension::Unit, Num};
 
+pub mod energy;
 pub mod force;
 pub mod misc;
+pub mod pressure;
 
-pub const DERIVED_UNITS: &[&[&'static dyn DerivedConversion]] = &[misc::UNITS, force::UNITS];
+pub const DERIVED_UNITS: &[&[&'static dyn DerivedConversion]] =
+    &[misc::UNITS, force::UNITS, &pressure::UNITS, &energy::UNITS];
 
 pub trait DerivedConversion {
     fn name(&self) -> &'static str;
@@ -36,7 +39,7 @@ impl Conversion for VarNum {
     }
 
     fn space(&self) -> Space {
-        unreachable!()
+        Space::Quantity
     }
 
     fn to_base(&self, this: Num) -> Num {
@@ -73,7 +76,7 @@ impl PartialEq for dyn DerivedConversion {
 macro_rules! impl_derived_units {
     {
         $(
-            $(#[$meta:meta])?
+            $(#[$meta:meta])*
             $name:ident => [
                 <| $unit: expr
                 $(, aliases = [$($aliases:expr),*])?

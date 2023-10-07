@@ -6,7 +6,7 @@ use regex::Regex;
 
 use crate::Num;
 
-static SEPARATOR: Lazy<Regex> = Lazy::new(|| Regex::new(r"=>|->|to").unwrap());
+static SEPARATOR: Lazy<Regex> = Lazy::new(|| Regex::new(r"=>|->|\sto\s").unwrap());
 
 #[derive(Debug)]
 pub struct Input {
