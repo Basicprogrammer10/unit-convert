@@ -10,7 +10,7 @@ pub mod misc;
 pub mod pressure;
 pub mod voltage;
 
-pub const DERIVED_UNITS: &[&[&'static DerivedConversion]] = &[
+pub const DERIVED_UNITS: &[&[&DerivedConversion]] = &[
     misc::UNITS,
     force::UNITS,
     &pressure::UNITS,
@@ -59,7 +59,7 @@ macro_rules! impl_derived_units {
             ]
         ),*
     } => {
-        use crate::units::derived::DerivedConversion;
+        use $crate::units::derived::DerivedConversion;
         pub const UNITS: &[&'static DerivedConversion] = &[$(&$name),*];
 
         $(
@@ -76,6 +76,7 @@ macro_rules! impl_derived_units {
 
 pub macro constant {
     ($conversion:literal, $exponent:literal) => {
+        #[allow(clippy::excessive_precision)]
         Unit::new(
             &Conversion {
                 name: "virtual-unit",
@@ -84,6 +85,7 @@ pub macro constant {
                 from_base: |x| x / $conversion,
                 aliases: &[],
                 metric: false,
+                special: true,
             },
             1.0,
             0.0,

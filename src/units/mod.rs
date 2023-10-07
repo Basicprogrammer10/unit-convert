@@ -74,6 +74,8 @@ pub struct Conversion {
     /// Checks if the unit is a metric unit.
     /// Metric units can use metric prefixes.
     pub metric: bool,
+    /// Checks if the unit is a special unit, which are virtual just used to hack in support for constants in derived units.
+    pub special: bool,
 }
 
 impl Conversion {
@@ -86,8 +88,8 @@ impl Conversion {
 pub fn find_unit(s: &str) -> Option<ConversionType> {
     UNIT_SPACES
         .iter()
-        .find_map(|space| space.get(s).map(|x| ConversionType::Conversion(x)))
-        .or_else(|| derived::get(s).map(|x| ConversionType::DerivedConversion(x)))
+        .find_map(|space| space.get(s).map(ConversionType::Conversion))
+        .or_else(|| derived::get(s).map(ConversionType::DerivedConversion))
 }
 
 impl ConversionType {
@@ -179,7 +181,8 @@ macro_rules! impl_units {
                 to_base: $to_base,
                 from_base: $from_base,
                 aliases: &[$($($aliases),*)?],
-                metric: false $(|| $metric)?
+                metric: false $(|| $metric)?,
+                special: false
             };
         )*
     };
