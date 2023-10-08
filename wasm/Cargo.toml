@@ -8,5 +8,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 anyhow = "1.0.75"
+serde = { version = "1.0.188", features = ["derive"] }
+serde-wasm-bindgen = "0.6.0"
 unit_convert = { path = ".." }
 wasm-bindgen = "0.2.87"

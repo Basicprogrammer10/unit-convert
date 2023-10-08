@@ -126,6 +126,10 @@ impl Unit {
             sci_exponent,
         }
     }
+
+    pub fn is_special(&self) -> bool {
+        self.conversion.special
+    }
 }
 
 impl Op {
@@ -152,28 +156,38 @@ impl FromStr for Dimensions {
 
 impl Display for Dimensions {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut units = self.units.iter().filter(|x| !x.is_special());
+
+        if let Some(unit) = units.next() {
+            write!(f, "{}", unit)?;
+        }
+
+        for unit in units {
+            write!(f, " {}", unit)?;
+        }
+
+        Ok(())
+    }
+}
+
+impl Display for Unit {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = if f.alternate() {
             |unit: &Unit| Cow::Owned(unit.conversion.space.to_string())
         } else {
             |unit: &Unit| Cow::Borrowed(unit.conversion.name)
         };
 
-        let mut out = String::new();
-
-        for unit in self.units.iter().filter(|x| !x.conversion.special) {
-            out.push_str(&if unit.power == 1.0 {
-                format!("[{}] ", name(unit))
-            } else {
-                format!(
-                    "[{}]{} ",
-                    name(unit),
-                    unit.power.to_string_with_chars(SUPERSCRIPT_CHARSET)
-                )
-            });
+        if self.power == 1.0 {
+            write!(f, "[{}]", name(self))
+        } else {
+            write!(
+                f,
+                "[{}]{}",
+                name(self),
+                self.power.to_string_with_chars(SUPERSCRIPT_CHARSET)
+            )
         }
-
-        out.pop();
-        f.write_str(&out)
     }
 }
 
@@ -189,6 +203,7 @@ impl PartialEq for Dimensions {
             *other_dimensions.entry(unit.conversion.space).or_insert(0.0) += unit.power;
         }
 
+        // self_dimensions.retain(|_, &mut v| v != 0.0);
         if self_dimensions.len() != other_dimensions.len() {
             return false;
         }

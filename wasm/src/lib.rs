@@ -1,8 +1,12 @@
+#![feature(iter_intersperse)]
+
 use anyhow::bail;
 use unit_convert::{self, dimension::Dimensions, input};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use std::str::FromStr;
+
+pub mod units;
 
 #[wasm_bindgen]
 pub fn convert(input: &str) -> Result<f64, String> {
@@ -25,3 +29,5 @@ pub fn convert(input: &str) -> Result<f64, String> {
 
     inner(input).map_err(|x| x.to_string())
 }
+
+// Note to self: build with `wasm-pack build --target web`

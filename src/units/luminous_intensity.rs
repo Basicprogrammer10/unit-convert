@@ -9,8 +9,8 @@ impl_units! {
             metric = true
         ],
         HEFNERKERZE => [
-            <| |hk| hk * 0.92,
-            |> |hk| hk / 0.92,
+            <| |hk| hk * 0.903,
+            |> |cd| cd / 0.903,
             aliases = ["hk"]
         ]
     }
