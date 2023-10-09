@@ -39,7 +39,7 @@ fn pull_number(raw: &str) -> Result<(Num, String)> {
     let mut num = String::new();
 
     let mut chars = raw.chars().peekable();
-    while let Some('0'..='9' | '.' | '-') = chars.peek() {
+    while let Some('0'..='9' | '.' | '-' | 'e' | 'E') = chars.peek() {
         num.push(chars.next().unwrap());
     }
 

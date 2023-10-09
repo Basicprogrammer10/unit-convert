@@ -1,20 +1,29 @@
 use std::fmt::Debug;
 
-use crate::Num;
-
-use super::{
-    derived::{energy, DerivedConversion},
-    time, Conversion, ConversionType,
+use crate::{
+    units::{
+        derived::{energy, DerivedConversion},
+        length, time, Conversion, ConversionType,
+    },
+    Num,
 };
 
-pub const SHORTHANDS: &[Shorthand] = &[Shorthand::new(
-    "Wh",
-    &[
-        HandUnit::new_derived(&energy::WATT, 1.0, 0.0),
-        HandUnit::new(&time::HOUR, 1.0, 0.0),
-    ],
-    true,
-)];
+pub const SHORTHANDS: &[Shorthand] = &[
+    Shorthand::new_metric(
+        "Wh",
+        &[
+            HandUnit::new_derived(&energy::WATT, 1.0, 0.0),
+            HandUnit::new(&time::HOUR, 1.0, 0.0),
+        ],
+    ),
+    Shorthand::new(
+        "mph",
+        &[
+            HandUnit::new(&length::MILE, 1.0, 0.0),
+            HandUnit::new(&time::HOUR, -1.0, 0.0),
+        ],
+    ),
+];
 
 #[derive(Debug, Clone)]
 pub struct Shorthand {
@@ -36,8 +45,20 @@ pub fn get(s: &str) -> Option<&'static Shorthand> {
 }
 
 impl Shorthand {
-    const fn new(name: &'static str, unit: &'static [HandUnit], metric: bool) -> Self {
-        Self { name, unit, metric }
+    const fn new(name: &'static str, unit: &'static [HandUnit]) -> Self {
+        Self {
+            name,
+            unit,
+            metric: false,
+        }
+    }
+
+    const fn new_metric(name: &'static str, unit: &'static [HandUnit]) -> Self {
+        Self {
+            name,
+            unit,
+            metric: true,
+        }
     }
 }
 

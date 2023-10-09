@@ -1,9 +1,11 @@
 use std::fmt::{Debug, Display};
 
-use crate::Num;
+use crate::{
+    shorthand::{self, Shorthand},
+    Num,
+};
 
-use self::{derived::DerivedConversion, shorthands::Shorthand};
-pub mod shorthands;
+use self::derived::DerivedConversion;
 
 pub mod angle;
 pub mod derived;
@@ -106,12 +108,13 @@ impl ConversionType {
     }
 }
 
+// todo: cleanup with unit::get
 pub fn find_unit(s: &str) -> Option<ConversionType> {
     UNIT_SPACES
         .iter()
         .find_map(|space| space.get(s).map(ConversionType::Conversion))
         .or_else(|| derived::get(s).map(ConversionType::DerivedConversion))
-        .or_else(|| shorthands::get(s).map(ConversionType::Shorthand))
+        .or_else(|| shorthand::get(s).map(ConversionType::Shorthand))
 }
 
 impl Display for UnitSpace {

@@ -6,6 +6,7 @@ pub mod dimension;
 pub mod input;
 pub mod misc;
 pub mod prefix;
+pub mod shorthand;
 #[cfg(test)]
 mod test;
 pub mod units;
