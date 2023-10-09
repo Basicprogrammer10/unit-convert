@@ -46,8 +46,22 @@ tests! {
     basic => [
         "10m/s => mi/h" => 22.37,
         "10m/s => cm/s" => 1000.0,
-        "10m/s^2 => mi/h^2" => 80529.71, // 80530.0?
-        "10 m/s^3 => yard/s^3" => 10.94
+        "10m/s^2 => mi/h^2" => 80529.71,
+        "10 m/s^3 => yard/s^3" => 10.94,
+        "10 yard/ms^2 => feet/s^2" => 30000.0
+    ],
+    derived => [
+        "1E2 footcandle to hefnerkerze*rad/ft^2" => 110.74,
+        "10 footcandle => lux" => 107.64
+    ],
+    shorthand => [
+        "10 km/h => mph" => 6.21,
+        "50 Wh => J" => 180000.0
+    ],
+        prefix => [
+        "50 kWh => J" => 180000000.0,
+        "30 kHz => Hz" => 0.03,
+        "30 kHz => GHz" => 30000000.0
     ]
 }
 

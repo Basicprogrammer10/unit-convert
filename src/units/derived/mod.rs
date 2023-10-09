@@ -34,10 +34,11 @@ pub struct DerivedConversion {
 
 #[inline]
 pub fn get(s: &str) -> Option<&'static DerivedConversion> {
+    let lower = s.to_ascii_lowercase();
     DERIVED_UNITS.iter().find_map(|space| {
         space
             .iter()
-            .find(|unit| unit.name == s || unit.aliases.contains(&s))
+            .find(|unit| unit.name == lower || unit.aliases.contains(&s))
             .copied()
     })
 }
@@ -110,7 +111,7 @@ macro_rules! concat_arrays_size {
     }};
 }
 
-/// Modified from [array_concat](https://crates.io/crates/array-concat) crate.
+/// Modified from the [array_concat](https://crates.io/crates/array-concat) crate.
 #[macro_export]
 macro_rules! join_arrays {
     ($($array:expr),*) => ({
@@ -124,7 +125,9 @@ macro_rules! join_arrays {
         }
 
         const SIZE: usize = $crate::concat_arrays_size!($($array),*);
-        let composed = ArrayConcatComposed::<_, SIZE> { decomposed: core::mem::ManuallyDrop::new(ArrayConcatDecomposed ( $($array),* ))};
+        let composed = ArrayConcatComposed::<_, SIZE> {
+            decomposed: core::mem::ManuallyDrop::new(ArrayConcatDecomposed($($array),*))
+        };
 
         core::mem::ManuallyDrop::into_inner(unsafe { composed.full })
     })
