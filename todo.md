@@ -22,6 +22,7 @@
 - [ ] Allow roots and non int powers
   - Take in a power in the from and to methods, or
   - Return a sequence of operations
+- [ ] DOCUMENTATION
 
 ## Time spent on this project
 

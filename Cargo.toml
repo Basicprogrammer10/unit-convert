@@ -14,8 +14,13 @@ name = "unit_convert"
 path = "src/main.rs"
 
 [features]
-default = ["wacky_units"]
+default = ["wacky_units", "documentation"]
+
+# Adds lots of weird, funny, and generally wacky units.
 wacky_units = []
+# Includes the documentation for each unit.
+# Used for the web version, but inaccessible from the CLI.
+documentation = []
 
 [dependencies]
 anyhow = "1.0.75"

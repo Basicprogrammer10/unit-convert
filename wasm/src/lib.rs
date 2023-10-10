@@ -9,6 +9,11 @@ use std::str::FromStr;
 pub mod units;
 
 #[wasm_bindgen]
+pub fn version() -> String {
+    unit_convert::VERSION.to_owned()
+}
+
+#[wasm_bindgen]
 pub fn convert(input: &str) -> Result<f64, String> {
     fn inner(input: &str) -> anyhow::Result<f64> {
         let inp = input::Input::from_str(input)?;

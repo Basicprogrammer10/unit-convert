@@ -72,13 +72,16 @@ macro_rules! impl_derived_units {
         ),*
     } => {
         use $crate::units::derived::DerivedConversion;
-        pub const UNITS: &[&'static DerivedConversion] = &[$(&$name),*];
+        #[allow(unused_doc_comments)]
+        pub const UNITS: &[&'static DerivedConversion] = &[$($(#[$meta])*&$name),*];
 
         $(
             $(#[$meta])*
             pub const $name: DerivedConversion = DerivedConversion {
-                $(description: Some($description),)?
-                $(link: Some($link),)?
+                $(#[cfg(feature = "documentation")]
+                    description: Some($description),)?
+                $(#[cfg(feature = "documentation")]
+                    link: Some($link),)?
                 expand: &$unit, // dont ask -- it works
                 ..DerivedConversion {
                     name: identconv::lower_strify!($name),
@@ -99,7 +102,9 @@ pub macro constant {
         Unit::new(
             &Conversion {
                 name: "virtual-unit",
+                #[cfg(feature = "documentation")]
                 description: None,
+                #[cfg(feature = "documentation")]
                 link: None,
                 space: Space::Dynamic,
                 to_base: |x| x * $conversion,
