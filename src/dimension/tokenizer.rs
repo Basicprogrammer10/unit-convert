@@ -79,7 +79,9 @@ impl Tokenizer {
 
         if let Ok(num) = self.buffer.parse::<Num>() {
             self.tokens.push(Token::Num(num));
-        } else if let Some((conversion, prefix)) = prefix::get(&self.buffer) {
+        } else if let Some((conversion, prefix)) =
+            prefix::get(&self.buffer.replace(['_', '-'], " "))
+        {
             add_conversion_tokens(
                 &mut self.tokens,
                 conversion,

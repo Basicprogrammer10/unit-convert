@@ -19,6 +19,9 @@
 - [x] Fix `1 ohm => 0.000001 ohm*ohm/ohm`.
       Should return 1.
 - [x] Add all [SI derived units](https://en.wikipedia.org/wiki/SI_derived_unit)
+- [ ] Allow roots and non int powers
+  - Take in a power in the from and to methods, or
+  - Return a sequence of operations
 
 ## Time spent on this project
 

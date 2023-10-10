@@ -19,7 +19,7 @@ pub const SHORTHANDS: &[Shorthand] = &[
     Shorthand::new(
         "mph",
         &[
-            HandUnit::new(&length::MILE, 1.0, 0.0),
+            HandUnit::new(&length::STATUTE_MILE, 1.0, 0.0),
             HandUnit::new(&time::HOUR, -1.0, 0.0),
         ],
     ),

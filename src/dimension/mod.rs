@@ -1,8 +1,4 @@
-use std::{
-    borrow::Cow,
-    fmt::{self, Display},
-    str::FromStr,
-};
+use std::{borrow::Cow, fmt::Display, str::FromStr};
 
 use anyhow::Result;
 use hashbrown::HashMap;
