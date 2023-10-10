@@ -27,6 +27,8 @@ pub const DERIVED_UNITS: &[&[&DerivedConversion]] = &[
 
 pub struct DerivedConversion {
     pub name: &'static str,
+    pub description: Option<&'static str>,
+    pub link: Option<&'static str>,
     pub expand: &'static [Unit],
     pub aliases: &'static [&'static str],
     pub metric: bool,
@@ -62,6 +64,8 @@ macro_rules! impl_derived_units {
             $(#[$meta:meta])*
             $name:ident => [
                 <| $unit: expr
+                $(, description = $description:expr)?
+                $(, link = $link:expr)?
                 $(, aliases = [$($aliases:expr),*])?
                 $(, metric = $metric:expr)?
             ]
@@ -73,10 +77,17 @@ macro_rules! impl_derived_units {
         $(
             $(#[$meta])*
             pub const $name: DerivedConversion = DerivedConversion {
-                name: identconv::lower_strify!($name),
-                expand: &$unit,
-                aliases: &[$($($aliases),*)?],
-                metric: false $(|| $metric)?
+                $(description: Some($description),)?
+                $(link: Some($link),)?
+                expand: &$unit, // dont ask -- it works
+                ..DerivedConversion {
+                    name: identconv::lower_strify!($name),
+                    description: None,
+                    link: None,
+                    expand: &[],
+                    aliases: &[$($($aliases),*)?],
+                    metric: false $(|| $metric)?
+                }
             };
         )*
     };
@@ -88,6 +99,8 @@ pub macro constant {
         Unit::new(
             &Conversion {
                 name: "virtual-unit",
+                description: None,
+                link: None,
                 space: Space::Dynamic,
                 to_base: |x| x * $conversion,
                 from_base: |x| x / $conversion,

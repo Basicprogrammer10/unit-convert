@@ -62,6 +62,10 @@ pub struct UnitSpace {
 pub struct Conversion {
     /// Gets the name of the unit.
     pub name: &'static str,
+    /// Unit description.
+    pub description: Option<&'static str>,
+    /// Informational link, usually to Wikipedia.
+    pub link: Option<&'static str>,
     /// Gets the unit space of the unit.
     pub space: Space,
     /// Converts a value in this unit to the unit space's base unit.
@@ -178,6 +182,8 @@ macro_rules! impl_units {
             $struct:ident => [
                 <| $to_base:expr,
                 |> $from_base:expr
+                $(, description = $description:expr)?
+                $(, link = $link:expr)?
                 $(, aliases = [$($aliases:expr),*])?
                 $(, metric = $metric:expr)?
             ]
@@ -194,14 +200,21 @@ macro_rules! impl_units {
 
         $(
             $(#[$meta])?
+            #[allow(clippy::excessive_precision)]
             pub const $struct: Conversion = Conversion {
-                name: lower_strify!($struct),
-                space: paste::expr! { Space::[< $space:camel >] },
-                to_base: $to_base,
-                from_base: $from_base,
-                aliases: &[$($($aliases),*)?],
-                metric: false $(|| $metric)?,
-                special: false
+                $(description: Some($description),)?
+                $(link: Some($link),)?
+                .. Conversion {
+                    name: lower_strify!($struct),
+                    description: None,
+                    link: None,
+                    space: paste::expr! { Space::[< $space:camel >] },
+                    to_base: $to_base,
+                    from_base: $from_base,
+                    aliases: &[$($($aliases),*)?],
+                    metric: false $(|| $metric)?,
+                    special: false
+                }
             };
         )*
     };

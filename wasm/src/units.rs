@@ -5,6 +5,8 @@ use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 #[derive(Serialize)]
 pub struct Unit {
     name: String,
+    description: Option<String>,
+    link: Option<String>,
     space: String,
     aliases: Vec<String>,
     metric: bool,
@@ -17,6 +19,8 @@ pub fn get_units() -> Vec<JsValue> {
         .flat_map(|x| x.units.iter())
         .map(|unit| Unit {
             name: unit.name.to_owned(),
+            description: unit.description.map(|x| x.to_owned()),
+            link: unit.link.map(|x| x.to_owned()),
             space: unit.space.to_string(),
             aliases: unit.aliases.iter().map(|&x| x.to_owned()).collect(),
             metric: unit.metric,
@@ -28,6 +32,8 @@ pub fn get_units() -> Vec<JsValue> {
 #[derive(Serialize)]
 pub struct DerivedUnit {
     name: String,
+    description: Option<String>,
+    link: Option<String>,
     aliases: Vec<String>,
     metric: bool,
     derived_from: String,
@@ -40,6 +46,8 @@ pub fn get_derived_units() -> Vec<JsValue> {
         .flat_map(|x| x.iter())
         .map(|x| DerivedUnit {
             name: x.name.to_owned(),
+            description: x.description.map(|x| x.to_owned()),
+            link: x.link.map(|x| x.to_owned()),
             aliases: x.aliases.iter().map(|&x| x.to_owned()).collect(),
             metric: x.metric,
             derived_from: stringify_units(&x.expand),
