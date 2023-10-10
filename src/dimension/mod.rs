@@ -151,7 +151,7 @@ impl FromStr for Dimensions {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let tokens = Tokenizer::tokenize(s)?;
-        let tree = Treeifyer::treeify(tokens);
+        let tree = Treeifyer::treeify(tokens)?;
         let units = Expander::expand(tree)?;
 
         Ok(Dimensions { units })

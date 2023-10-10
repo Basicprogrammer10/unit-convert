@@ -1,3 +1,4 @@
+use anyhow::{bail, Result};
 use hashbrown::HashMap;
 
 use super::Token;
@@ -8,12 +9,12 @@ pub struct Treeifyer {
 }
 
 impl Treeifyer {
-    pub fn treeify(mut tokens: Vec<Token>) -> Token {
+    pub fn treeify(mut tokens: Vec<Token>) -> Result<Token> {
         if tokens.len() == 1 {
             let token = tokens.pop().unwrap();
             match token {
                 Token::Group(tokens) => return Treeifyer::treeify(tokens),
-                Token::Unit { .. } => return token,
+                Token::Unit { .. } => return Ok(token),
                 Token::Op(..) | Token::Tree(..) | Token::Num(..) => {
                     unreachable!("Invalid token")
                 }
@@ -22,10 +23,10 @@ impl Treeifyer {
 
         let mut ctx = Self::new(tokens);
         ctx.update_precedence_counts();
-        ctx._treeify();
+        ctx._treeify()?;
 
         assert_eq!(ctx.tokens.len(), 1);
-        ctx.tokens.pop().unwrap()
+        Ok(ctx.tokens.pop().unwrap())
     }
 
     fn new(tokens: Vec<Token>) -> Self {
@@ -36,9 +37,10 @@ impl Treeifyer {
     }
 
     // this is probably inefficient or something but my brain cant handle thinking about math for any longer
-    fn _treeify(&mut self) {
-        while self.tokens.len() > 1 {
+    fn _treeify(&mut self) -> Result<()> {
+        'outer: while self.tokens.len() > 1 {
             let mut i = 0;
+
             while i < self.tokens.len() {
                 let Token::Op(op) = self.tokens[i] else {
                     i += 1;
@@ -52,6 +54,7 @@ impl Treeifyer {
                     .max_by_key(|x| x.0)
                     .unwrap()
                     .0;
+
                 if op.precedence() < *max_precedence {
                     i += 1;
                     continue;
@@ -59,19 +62,23 @@ impl Treeifyer {
 
                 let make_tree = |x| match x {
                     Token::Group(tokens) => Treeifyer::treeify(tokens),
-                    _ => x,
+                    _ => Ok(x),
                 };
 
-                let left = make_tree(self.tokens.remove(i - 1));
-                let right = make_tree(self.tokens.remove(i));
+                let left = make_tree(self.tokens.remove(i - 1))?;
+                let right = make_tree(self.tokens.remove(i))?;
 
                 self.tokens[i - 1] = Token::Tree(op, Box::new(left), Box::new(right));
                 self.precedence
                     .entry(op.precedence())
                     .and_modify(|x| *x -= 1);
-                break;
+                continue 'outer;
             }
+
+            bail!("Missing operator in expression");
         }
+
+        Ok(())
     }
 
     fn update_precedence_counts(&mut self) {
@@ -108,7 +115,7 @@ mod test {
             Token::Num(2.0),
         ];
 
-        let tree = Treeifyer::treeify(tokens);
+        let tree = Treeifyer::treeify(tokens).unwrap();
 
         assert_eq!(
             tree,

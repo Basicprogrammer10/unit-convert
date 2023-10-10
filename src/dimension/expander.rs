@@ -23,14 +23,10 @@ impl Expander {
         match token {
             Token::Tree(op, left, right) => match op {
                 Op::Pow => {
-                    self._expand(
-                        *left,
-                        power
-                            * match *right {
-                                Token::Num(num) => num,
-                                _ => bail!("Invalid exponent. (Expected number)"),
-                            },
-                    )?;
+                    let Token::Num(exp) = *right else {
+                        bail!("Invalid exponent. (Expected number literal)");
+                    };
+                    self._expand(*left, power * exp)?;
                 }
                 Op::Div => {
                     self._expand(*left, power)?;

@@ -1,7 +1,11 @@
 use anyhow::{bail, Result};
 
 use super::{Op, Token, Unit};
-use crate::{prefix, units::ConversionType, Num};
+use crate::{
+    prefix,
+    units::{derived::constant, ConversionType},
+    Num,
+};
 
 pub struct Tokenizer {
     chars: Box<[char]>,
@@ -110,11 +114,12 @@ pub fn add_conversion_tokens(
                 .map(|x| Token::Unit(*x))
                 .intersperse(Token::Op(Op::Mul))
                 .collect::<Vec<_>>();
-            // TODO: clean this up, please
-            // maybe an empty unit?
-            if let Some(Token::Unit(unit)) = new_tokens.first_mut() {
-                unit.sci_exponent += sci_exponent;
+
+            if sci_exponent != 0.0 && !new_tokens.is_empty() {
+                new_tokens.push(Token::Op(Op::Mul));
+                new_tokens.push(Token::Unit(constant!(1.0, sci_exponent)));
             }
+
             tokens.push(Token::Group(new_tokens))
         }
         ConversionType::Shorthand(shorthand) => {
@@ -129,7 +134,7 @@ pub fn add_conversion_tokens(
                             e.sci_exponent + if i == 0 { sci_exponent } else { 0.0 },
                         )
                     }
-                    ConversionType::Shorthand(..) => unreachable!(),
+                    ConversionType::Shorthand(..) => unreachable!("Shorthands in shorthands!?"),
                 }
                 tokens.push(Token::Op(Op::Mul));
             }

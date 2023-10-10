@@ -83,7 +83,7 @@ macro_rules! impl_derived_units {
 }
 
 pub macro constant {
-    ($conversion:literal, $exponent:literal) => {
+    ($conversion:literal, $exponent:expr) => {{
         #[allow(clippy::excessive_precision)]
         Unit::new(
             &Conversion {
@@ -96,9 +96,9 @@ pub macro constant {
                 special: true,
             },
             1.0,
-            0.0,
+            $exponent,
         )
-    },
+    }},
     ($conversion:literal) => {
         constant!($conversion, 0.0)
     }

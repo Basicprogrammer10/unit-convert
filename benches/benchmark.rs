@@ -17,7 +17,7 @@ macro_rules! bench_parse_components {
             )
         });
 
-        let tree = Treeifyer::treeify(tokens);
+        let tree = Treeifyer::treeify(tokens).unwrap();
         $c.bench_function(concat!("expand `", $unit, "`"), |b| {
             b.iter_batched(
                 || tree.clone(),
