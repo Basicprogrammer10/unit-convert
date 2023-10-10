@@ -26,6 +26,7 @@ impl Treeifyer {
         ctx._treeify()?;
 
         assert_eq!(ctx.tokens.len(), 1);
+        assert!(matches!(ctx.tokens[0], Token::Tree(..)));
         Ok(ctx.tokens.pop().unwrap())
     }
 

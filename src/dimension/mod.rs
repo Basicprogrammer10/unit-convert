@@ -1,4 +1,8 @@
-use std::{borrow::Cow, fmt::Display, str::FromStr};
+use std::{
+    borrow::Cow,
+    fmt::{self, Display},
+    str::FromStr,
+};
 
 use anyhow::Result;
 use hashbrown::HashMap;
@@ -103,6 +107,7 @@ impl Dimensions {
         Ok(value)
     }
 
+    /// Only for viewing the unit-space dimensions, do not use for conversions.
     pub fn simplify(&self) -> Self {
         let mut new_units = Vec::<Unit>::new();
 
@@ -118,6 +123,7 @@ impl Dimensions {
             }
         }
 
+        new_units.retain(|x| x.power != 0.0);
         Dimensions { units: new_units }
     }
 }
@@ -160,14 +166,14 @@ impl FromStr for Dimensions {
 
 impl Display for Dimensions {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut units = self.units.iter().filter(|x| !x.is_special());
+        let name: &dyn Fn(&Unit) -> String = if f.alternate() {
+            &|unit| format!("{:#}", unit)
+        } else {
+            &|unit| format!("{}", unit)
+        };
 
-        if let Some(unit) = units.next() {
-            write!(f, "{}", unit)?;
-        }
-
-        for unit in units {
-            write!(f, " {}", unit)?;
+        for (i, unit) in self.units.iter().filter(|x| !x.is_special()).enumerate() {
+            write!(f, "{}{}", if i == 0 { "" } else { " " }, name(unit))?;
         }
 
         Ok(())
@@ -207,19 +213,10 @@ impl PartialEq for Dimensions {
             *other_dimensions.entry(unit.conversion.space).or_insert(0.0) += unit.power;
         }
 
-        // self_dimensions.retain(|_, &mut v| v != 0.0);
-        if self_dimensions.len() != other_dimensions.len() {
-            return false;
-        }
+        self_dimensions.retain(|_, &mut v| v != 0.0);
+        other_dimensions.retain(|_, &mut v| v != 0.0);
 
-        for (&space, &exponent) in &self_dimensions {
-            match other_dimensions.get(&space) {
-                Some(&i) if i == exponent => {}
-                _ => return false,
-            }
-        }
-
-        true
+        self_dimensions == other_dimensions
     }
 }
 
