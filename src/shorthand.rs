@@ -8,6 +8,7 @@ use crate::{
     Num,
 };
 
+// TODO: Should these just be derived units?
 pub const SHORTHANDS: &[Shorthand] = &[
     Shorthand::new_metric(
         "Wh",
@@ -20,6 +21,13 @@ pub const SHORTHANDS: &[Shorthand] = &[
         "mph",
         &[
             HandUnit::new(&length::STATUTE_MILE, 1.0, 0.0),
+            HandUnit::new(&time::HOUR, -1.0, 0.0),
+        ],
+    ),
+    Shorthand::new(
+        "knot",
+        &[
+            HandUnit::new(&length::NAUTICAL_MILE, 1.0, 0.0),
             HandUnit::new(&time::HOUR, -1.0, 0.0),
         ],
     ),

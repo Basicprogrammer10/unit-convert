@@ -126,10 +126,11 @@ impl_units! {
             <| |jubilee| jubilee * 1577880000.0,
             |> |s| s / 1577880000.0
         ],
-        // TODO: Find info on this
         SIDEREAL_DAY => [
             <| |sday| sday * 86164.0891217,
             |> |s| s / 86164.0891217,
+            description = "The time for a single rotation of the earth on its axis in reference to any star or to the vernal equinox at the meridian. Equal to 23 hours, 56 minutes, 4.09 seconds.",
+            link = "https://en.wikipedia.org/wiki/Sidereal_time#Sidereal_day",
             aliases = ["sidereal day"]
         ],
         SHAKE => [
@@ -159,12 +160,14 @@ impl_units! {
             description = "KerMetric time is a concept that divides the day into 100 equal parts called kermits. Each kermit is equivalent to 14.4 minutes.",
             link = "https://en.wikipedia.org/wiki/List_of_unusual_units_of_measurement#KerMetric_time"
         ],
+        #[cfg(feature = "wacky_units")]
         THIRD => [
             <| |third| third / 60.0,
             |> |s| s * 60.0,
             description = "An extrapolation of the word second (2nd division of an hour), equal to 1/60 of a second.",
             link = "https://en.wikipedia.org/wiki/List_of_unusual_units_of_measurement#Thirds,_fourths"
         ],
+        #[cfg(feature = "wacky_units")]
         FOURTH => [
             <| |fourth| fourth / 3600.0,
             |> |s| s * 3600.0,
