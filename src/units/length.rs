@@ -55,7 +55,7 @@ impl_units! {
         ASTRONMICAL_UNIT => [
             <| |au| au * 1.495978707e11,
             |> |m| m / 1.495978707e11,
-            description = "Roughly the distance from Earth to the Sun and approximately equal to 150 million kilometres (93 million miles) or 8.3 light-minutes",
+            description = "Roughly the distance from Earth to the Sun and approximately equal to 150 million kilometers (93 million miles) or 8.3 light-minutes",
             link = "https://en.wikipedia.org/wiki/Astronomical_unit",
             aliases = ["au", "astronomical unit"]
         ],
@@ -162,106 +162,99 @@ impl_units! {
         SMOOT => [
             <| |s| s * 1.7,
             |> |m| m / 1.7,
-            description = "",
-            link = ""
+            description = "Created as part of an MIT fraternity pledge to Lambda Chi Alpha by Oliver R. Smoot. One smoot is equal to Oliver Smoot's height at the time of the prank, 5 feet 7 inches (1.70 m).",
+            link = "https://en.wikipedia.org/wiki/Smoot"
         ],
         #[cfg(feature = "wacky_units")]
         MEGALITHIC_YARD => [
             <| |megalithic_yard| megalithic_yard * 0.83,
             |> |m| m / 0.83,
-            description = "",
-            link = "",
+            description = "Some researchers believe it was used in the construction of megalithic structures. Equal to about 2.72 feet (0.83 m).",
+            link = "https://en.wikipedia.org/wiki/Megalithic_yard",
             aliases = ["megalithic yard"]
         ],
         #[cfg(feature = "wacky_units")]
-        FINGER_BREADTH => [
+        DIGIT => [
             <| |fingerbreadth| fingerbreadth * 0.01905,
             |> |m| m / 0.01905,
-            description = "",
-            link = ""
-        ],
-        #[cfg(feature = "wacky_units")]
-        DOUBLE_DECKER_BUS => [
-            <| |ddb| ddb * 18.75,
-            |> |m| m / 18.75,
-            description = "",
-            link = "",
-            aliases = ["double-decker bus"]
+            description = "Approximately the ~breadth~ of an adult's finger (3/4 in).",
+            link = "https://en.wikipedia.org/wiki/Finger_(unit)"
         ],
         BARLEYCORN => [
             <| |barley| barley * 0.00846667,
             |> |m| m / 0.00846667,
-            description = "",
-            link = ""
-        ],
-        #[cfg(feature = "wacky_units")]
-        MICKEY => [
-            <| |mickey| mickey * 1.27e-4,
-            |> |m| m / 1.27e-4,
-            description = "",
-            link = ""
+            description = "Equal to 1/3 of an inch. It is still used as the basis of shoe sizes in English-speaking countries.",
+            link = "https://en.wikipedia.org/wiki/Barleycorn_(unit)"
         ],
         #[cfg(feature = "wacky_units")]
         NAIL => [
             <| |nail| nail * 0.05715,
             |> |m| m / 0.05715,
-            description = "",
-            link = ""
+            description = "A sixteenth of a yard or 5+1/4 inches.",
+            link = "https://en.wikipedia.org/wiki/Nail_(unit)"
         ],
         #[cfg(feature = "wacky_units")]
         ALTUVE => [
             <| |altuve| altuve * 1.68,
             |> |m| m / 1.68,
-            description = "",
-            link = ""
+            description = "Altuve is an informal measurement of distance equal to 5 feet 5 inches or 1.65 m. This is a reference to Houston Astros player José Altuve, one of the shortest players in Major League Baseball.",
+            link = "https://en.wikipedia.org/wiki/List_of_humorous_units_of_measurement#Altuve"
         ],
+        #[cfg(feature = "wacky_units")]
         METRIC_INCH => [
             <| |metrinch| metrinch * 0.025,
             |> |m| m / 0.025,
-            description = "",
-            link = "",
+            description = "Equal to 25 milometers.",
+            link = "https://en.wikipedia.org/wiki/List_of_metric_units#Length_2",
             aliases = ["metric inch"]
         ],
+        #[cfg(feature = "wacky_units")]
         METIC_FOOT => [
             <| |metrifoot| metrifoot * 0.3,
             |> |m| m / 0.3,
-            description = "",
-            link = "",
+            description = "Equal to three hundred milometers ",
+            link = "https://en.wikipedia.org/wiki/List_of_metric_units#Length_2",
             aliases = ["metric foot"]
         ],
         METRIC_CHAIN => [
             <| |metrichain| metrichain * 20.0,
             |> |m| m / 20.0,
-            description = "",
-            link = "",
+            description = "Equal to 20 meters.",
+            link = "https://en.wikipedia.org/wiki/List_of_metric_units#Length_2",
             aliases = ["metric chain"]
         ],
         METRIC_LIEUE => [
             <| |metrilieue| metrilieue * 4000.0,
             |> |m| m / 4000.0,
-            description = "",
-            link = "",
+            description = "Equal to four kilometers.",
+            link = "https://en.wikipedia.org/wiki/List_of_metric_units#Length_2",
             aliases = ["metric lieue"]
         ],
         SCANDINAVIAN_MILE => [
             <| |scanmile| scanmile * 10000.0,
             |> |m| m / 10000.0,
-            description = "",
-            link = "",
+            description = "Equal to ten kilometers.",
+            link = "https://en.wikipedia.org/wiki/List_of_metric_units#Length_2",
             aliases = ["scandinavian mile"]
         ],
-        FERMI => [
+        FEMTOMETRE => [
             <| |fm| fm * 1e-15,
             |> |m| m / 1e-15,
-            description = "",
-            link = "",
-            aliases = ["fm"]
+            description = "Equal to 10^{-15} metres, which means a quadrillionth of one metre. This distance is sometimes called a fermi and was so named in honour of Italian naturalized to American physicist Enrico Fermi, as it is a typical length-scale of nuclear physics. ",
+            link = "https://en.wikipedia.org/wiki/Femtometre",
+            aliases = ["fermi", "fm"]
         ],
         PICA => [
             <| |pica| pica * 0.0042333,
             |> |m| m / 0.0042333,
-            description = "",
-            link = ""
+            description = "A typographic unit of measure corresponding to 1/6 of an inch.",
+            link = "https://en.wikipedia.org/wiki/Pica_(typography)"
+        ],
+        POINT => [
+            <| |point| point * 0.0003528,
+            |> |m| m / 0.0003528,
+            description = "A typographic unit of measure for measuring font size, leading, and other items on a printed page. Equal to 1/12 of a pica.",
+            link = "https://en.wikipedia.org/wiki/Point_(typography)"
         ]
     }
 }
