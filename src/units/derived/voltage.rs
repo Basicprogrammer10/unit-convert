@@ -15,6 +15,8 @@ impl_derived_units! {
     /// `kg*m^2*s^{-3}*A^{-1}
     VOLT => [
         <| _VOLT,
+        description = "Unit of electric potential, electric potential difference (voltage), and electromotive force in the International System of Units.",
+        link = "https://en.wikipedia.org/wiki/Volt",
         aliases = ["V"],
         metric = true
     ],
@@ -23,6 +25,8 @@ impl_derived_units! {
         <| join_arrays!(_VOLT, [
             constant!(299.792458)
         ]),
+        description = "Equal to 299.792458 volts.",
+        link = "https://en.wikipedia.org/wiki/Statvolt",
         aliases = ["statV"],
         metric = true
     ]

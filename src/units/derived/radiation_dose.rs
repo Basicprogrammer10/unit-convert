@@ -18,6 +18,8 @@ impl_derived_units! {
     /// `m^2*s^{-2}`
     GRAY => [
         <| _GRAY,
+        description = "Unit of ionizing radiation dose in the International System of Units.",
+        link = "https://en.wikipedia.org/wiki/Gray_(unit)",
         aliases = ["Gy"]
     ],
     /// `0.01 Gy`
@@ -25,11 +27,15 @@ impl_derived_units! {
         <| join_arrays!(_GRAY, [
             constant!(0.01)
         ]),
+        description = "Defined as 1 rad = 0.01 Gy = 0.01 J/kg.",
+        link = "https://en.wikipedia.org/wiki/Rad_(radiation_unit)",
         metric = true
     ],
     /// `m^2*s^{-2}`
     SIEVERT => [
         <| _SIEVERT,
+        description = "Unit in the International System of Units intended to represent the stochastic health risk of ionizing radiation.",
+        link = "https://en.wikipedia.org/wiki/Sievert",
         aliases = ["Sv"]
     ],
     /// `0.01 Sv`
@@ -37,6 +43,8 @@ impl_derived_units! {
         <| join_arrays!(_SIEVERT, [
             constant!(0.01)
         ]),
+        description = "A CGS unit of equivalent dose, effective dose, and committed dose.",
+        link = "https://en.wikipedia.org/wiki/Roentgen_equivalent_man",
         aliases = ["rem"],
         metric = true
     ]

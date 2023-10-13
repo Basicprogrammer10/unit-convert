@@ -111,6 +111,7 @@ pub macro constant {
                 from_base: |x| x / $conversion,
                 aliases: &[],
                 metric: false,
+                // TODO: Replace with special space?
                 special: true,
             },
             1.0,
