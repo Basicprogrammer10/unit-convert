@@ -20,6 +20,8 @@ impl_derived_units! {
         <| [
             Unit::new(&time::SECOND, -1.0, 0.0)
         ],
+        description = "The unit of frequency in the International System of Units. Equal to 1 cycle per second.",
+        link = "https://en.wikipedia.org/wiki/Hertz",
         metric = true
     ],
     /// `kg^{-1}*m^{-2}*s^4*A^2`
@@ -30,6 +32,8 @@ impl_derived_units! {
             Unit::new(&time::SECOND, 4.0, 0.0),
             Unit::new(&electric_current::AMPERE, 2.0, 0.0)
         ],
+        description = "The unit of electrical capacitance in the International System of Units. Equal to 1 coulomb per volt.",
+        link = "https://en.wikipedia.org/wiki/Farad",
         aliases = ["F"],
         metric = true
     ],
@@ -41,6 +45,8 @@ impl_derived_units! {
             Unit::new(&time::SECOND, -3.0, 0.0),
             Unit::new(&electric_current::AMPERE, -2.0, 0.0)
         ],
+        description = "The unit of electrical resistance in the International System of Units.",
+        link = "https://en.wikipedia.org/wiki/Ohm",
         aliases = ["Ω"],
         metric = true
     ],
@@ -52,12 +58,16 @@ impl_derived_units! {
             Unit::new(&time::SECOND, 3.0, 0.0),
             Unit::new(&electric_current::AMPERE, 2.0, 0.0)
         ],
-        aliases = ["S"],
+        description = "The unit of electric conductance, electric susceptance, and electric admittance in the International System of Units.",
+        link = "https://en.wikipedia.org/wiki/Siemens_(unit)",
+        aliases = ["S", "mho", "℧"],
         metric = true
     ],
     /// `kg*m^2*s^{-2}*A^{-1}`
     WEBER => [
         <| _WEBER,
+        description = "The unit of magnetic flux in the International System of Units.",
+        link = "https://en.wikipedia.org/wiki/Weber_(unit)",
         aliases = ["Wb"],
         metric = true
     ],
@@ -66,6 +76,8 @@ impl_derived_units! {
         <| join_arrays!(_WEBER, [
             constant!(1e-8, 0.0)
         ]),
+        description = "The CGS (centimetre-gram-second) unit of magnetic flux.",
+        link = "https://en.wikipedia.org/wiki/Maxwell_%28unit%29",
         aliases = ["Mx"]
     ],
     /// `kg*s^{−2}*A^{-1}`
@@ -75,6 +87,8 @@ impl_derived_units! {
             Unit::new(&time::SECOND, -2.0, 0.0),
             Unit::new(&electric_current::AMPERE, -1.0, 0.0)
         ],
+        description = "The unit of magnetic flux density (also called magnetic B-field strength) in the International System of Units.",
+        link = "https://en.wikipedia.org/wiki/Tesla_(unit)",
         aliases = ["T"],
         metric = true
     ],
@@ -86,6 +100,8 @@ impl_derived_units! {
             Unit::new(&time::SECOND, -2.0, 0.0),
             Unit::new(&electric_current::AMPERE, -2.0, 0.0)
         ],
+        description = "The unit of electrical inductance in the International System of Units.",
+        link = "https://en.wikipedia.org/wiki/Henry_(unit)",
         aliases = ["H"],
         metric = true
     ],
@@ -95,6 +111,8 @@ impl_derived_units! {
             Unit::new(&luminous_intensity::CANDELA, 1.0, 0.0),
             Unit::new(&angle::STERADIAN, 1.0, 0.0)
         ],
+        description = "The unit of luminous flux, a measure of the total quantity of visible light emitted by a source per unit of time, in the International System of Units.",
+        link = "https://en.wikipedia.org/wiki/Lumen_(unit)",
         aliases = ["lm"]
     ],
     /// `mol/s`
@@ -103,6 +121,8 @@ impl_derived_units! {
             Unit::new(&quantity::MOLE, 1.0, 0.0),
             Unit::new(&time::SECOND, -1.0, 0.0)
         ],
+        description = "The unit of catalytic activity in the International System of Units.",
+        link = "https://en.wikipedia.org/wiki/Katal",
         aliases = ["kat"],
         metric = true
     ]
