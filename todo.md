@@ -23,7 +23,7 @@
   - Take in a power in the from and to methods, or
   - Return a sequence of operations
 - [ ] DOCUMENTATION
-- [ ] Use `⇒` on web interface
+- [x] Use `⇒` on web interface
 
 - https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf/fcf090b2-04e6-88cc-1149-c3e029ad8232
 
